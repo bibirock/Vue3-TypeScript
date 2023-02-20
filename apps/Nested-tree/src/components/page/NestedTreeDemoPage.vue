@@ -12,19 +12,23 @@ div.px-20.pb-20.pt-5.h-screen.bg-slate-900
                         input(type="text" v-model="input.value" placeholder="Value").bg-transparent.outline-none.border.text-slate-200.border-slate-500.text-base.px-2.py-1.w-full
                     button.w-10.text-sm.flex.justify-center.items-center.bg-slate-300.text-slate-800(@click="deleteRow(index)") {{ " - " }}
         div.text-slate-200.p-6.border.border-slate-500
+            TreeList(:data='treeNodeArr')
 </template>
 <script setup lang="ts">
-import { reactive, watch } from 'vue'
-import type { InputType } from '@/types/index.mjs';
+import { reactive, watch, ref } from 'vue'
+import TreeList from '@/components/TreeList.vue'
+import type { InputType, TreeArray } from '@/types/index.mjs';
 import { createTreeStructure } from '@/lib/utils'
 
 const userInputData: InputType = reactive([{
-    key: "aaa",
-    value: "bbb"
+    key: "",
+    value: ""
 }])
 
+let treeNodeArr = ref<TreeArray>()
+
 watch(() => userInputData, () => {
-    console.log(createTreeStructure(userInputData));
+    treeNodeArr.value = createTreeStructure(userInputData)
 }, { deep: true })
 
 function addRow() {
@@ -37,7 +41,5 @@ function addRow() {
 function deleteRow(index: number) {
     userInputData?.splice(index, 1)
 }
-
-
 </script>
 <style scoped></style>
