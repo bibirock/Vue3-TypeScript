@@ -15,21 +15,16 @@ div.px-20.pb-20.pt-5.h-screen.bg-slate-900
 </template>
 <script setup lang="ts">
 import { reactive, watch } from 'vue'
+import type { InputType } from '@/types/index.mjs';
+import { createTreeStructure } from '@/lib/utils'
 
-interface rawInputData {
-    key?: string,
-    value?: string
-}
-
-type inputType = Array<rawInputData>
-
-const userInputData: inputType = reactive([{
+const userInputData: InputType = reactive([{
     key: "aaa",
     value: "bbb"
 }])
 
 watch(() => userInputData, () => {
-    console.log("我被改動了");
+    console.log(createTreeStructure(userInputData));
 }, { deep: true })
 
 function addRow() {
@@ -42,5 +37,7 @@ function addRow() {
 function deleteRow(index: number) {
     userInputData?.splice(index, 1)
 }
+
+
 </script>
 <style scoped></style>
