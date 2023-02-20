@@ -9,16 +9,12 @@
     "preview": "vite preview",
     "lint": "eslint --ext .js,.vue -f ./node_modules/eslint-friendly-formatter src/"
   },
-  "pre-commit": [
-    "lint"
-  ],
   "dependencies": {
     "@typescript-eslint/eslint-plugin": "^5.52.0",
     "@typescript-eslint/parser": "^5.52.0",
     "axios": "^1.3.3",
     "eslint": "^8.34.0",
     "eslint-plugin-vue": "^9.9.0",
-    "pre-commit": "^1.2.2",
     "vue": "^3.2.45"
   },
   "devDependencies": {
