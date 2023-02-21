@@ -18,7 +18,7 @@ div.px-20.pb-20.pt-5.h-screen.bg-slate-900
 import { reactive, watch, ref } from 'vue'
 import TreeList from '@/components/TreeList.vue'
 import type { InputType, TreeArray } from '@/types/index.mjs';
-import { createTreeStructure } from '@/lib/utils'
+import { $createTreeStructure } from '@/lib/utils'
 
 const userInputData: InputType = reactive([{
     key: "",
@@ -28,7 +28,7 @@ const userInputData: InputType = reactive([{
 let treeNodeArr = ref<TreeArray>()
 
 watch(() => userInputData, () => {
-    treeNodeArr.value = createTreeStructure(userInputData)
+    treeNodeArr.value = $createTreeStructure(userInputData)
 }, { deep: true })
 
 function addRow() {
