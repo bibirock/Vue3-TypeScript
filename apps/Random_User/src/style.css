@@ -15,10 +15,4 @@
     .set-item-start {
         @apply flex justify-start items-center;
     }
-    .border-1px {
-        @apply border-solid border border-gray-200;
-    }
-    .dd {
-        color: rgb(79, 136, 215);
-    }
 }
