@@ -9,7 +9,7 @@ div(:class="'relative'")
 import NavBar from '@/components/layout/NavBar.vue'
 import UserCard from '@/components/layout/UserCard.vue'
 import { ref, computed, reactive, watchEffect } from 'vue';
-import type { UserData, RequireUserDataParams, SettingData } from '@/types/type'
+import type { RequireUserDataParams, SettingData, UserDataArr } from '@/types/type'
 import { $fecthUserData } from '@/apis/userAPI'
 
 const currentPage = ref(1)
@@ -20,7 +20,6 @@ const pageSettingData: SettingData = reactive({
     userCount: 30
 })
 
-type UserDataArr = Array<UserData>
 const userData = ref<UserDataArr>()
 async function getUserData(userCount: number, pages: number) {
     const require: RequireUserDataParams = {

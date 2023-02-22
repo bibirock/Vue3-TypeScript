@@ -55,13 +55,15 @@ export interface UserData {
     nat: string;
 }
 
-export interface RequireUserDataParams {
+export type RequireUserDataParams = {
     page: number;
     results: number;
-}
+};
 
 export interface SettingData {
     bookMark: string;
     userCount: number;
     dispalyMode: boolean;
 }
+
+export type UserDataArr = Array<UserData>;
