@@ -54,3 +54,14 @@ export interface UserData {
     };
     nat: string;
 }
+
+export interface RequireUserDataParams {
+    page: number;
+    results: number;
+}
+
+export interface SettingData {
+    bookMark: string;
+    userCount: number;
+    dispalyMode: boolean;
+}
