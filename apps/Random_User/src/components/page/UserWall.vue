@@ -1,24 +1,18 @@
 <template lang='pug'>
 div(:class="'relative'")
     NavBar(:class="'sticky top-0 bg-white'" @setPageSettingData="getPageSettingData")
-    div 
-        div.card-list(:class="'p-11'")
-            .user-area(:class="'mx-auto w-11/12 flex flex-wrap flex-row justify-start'")
-                .file(v-for='(user,i) in userData' @click="" :class="'m-2'")
-                    .img-area(:class="'mx-auto border border-sky-500 max-w-[136px]'")
-                        img(:class="'p-1 '" :src="user.picture.large" referrerPolicy="no-referrer")
-                        span(:class="'text-center block'") {{ user.name.first }}
-    a-pagination(v-model:current="currentPage" :total="total")
+    UserCard(:data="userData")
+    a-pagination(v-model:current="currentPage" :total="total" :showSizeChanger="false")
 </template>
 
 <script setup lang="ts">
 import NavBar from '@/components/layout/NavBar.vue'
-import { ref, onMounted, computed, reactive, watch } from 'vue';
+import UserCard from '@/components/layout/UserCard.vue'
+import { ref, computed, reactive, watchEffect } from 'vue';
 import type { UserData, RequireUserDataParams, SettingData } from '@/types/type'
 import { $fecthUserData } from '@/apis/userAPI'
 
 const currentPage = ref(1)
-const userCount = ref(30)
 
 const pageSettingData: SettingData = reactive({
     bookMark: 'ALL',
@@ -26,18 +20,13 @@ const pageSettingData: SettingData = reactive({
     userCount: 30
 })
 
-onMounted(async () => {
-    getUserData()
-})
-
 type UserDataArr = Array<UserData>
 const userData = ref<UserDataArr>()
-const require: RequireUserDataParams = reactive({
-    page: currentPage.value,
-    results: userCount.value
-})
-
-async function getUserData() {
+async function getUserData(userCount: number, pages: number) {
+    const require: RequireUserDataParams = {
+        results: userCount,
+        page: pages
+    }
     const res = await $fecthUserData(require)
     userData.value = res.results
     console.log(userData.value);
@@ -50,8 +39,11 @@ function getPageSettingData(pageSetting: SettingData) {
 }
 
 const total = computed(() => {
-    let total = 3010 / pageSettingData.userCount
-    return total
+    return 3010 / pageSettingData.userCount
+})
+
+watchEffect(() => {
+    getUserData(pageSettingData.userCount, currentPage.value)
 })
 </script>
 <style scoped></style>
