@@ -1,9 +1,10 @@
 <template lang='pug'>
 div(:class="'relative'")
-    NavBar(:class="'sticky top-0 bg-white'" @setPageSettingData="getPageSettingData")
+    NavBar(:class="'sticky top-0 bg-white z-10'" @setPageSettingData="getPageSettingData")
     keep-alive
         component(:is="current.views" :key="current.views" :data="userData")
-    a-pagination(v-model:current="currentPage" :total="total" :showSizeChanger="false")
+    div(:class="'set-item-center pb-4'")
+        a-pagination(v-model:current="currentPage" :total="total" :showSizeChanger="false" :class="''")
 </template>
 
 <script setup lang="ts">
@@ -49,7 +50,6 @@ async function getUserData(userCount: number, pages: number) {
     }
     const res = await $fecthUserData(require)
     userData.value = res.results
-    console.log(userData.value);
 }
 
 function getPageSettingData(pageSetting: SettingData) {
