@@ -1,3 +1,4 @@
+import { defineComponent } from 'vue';
 export interface UserData {
     gender: string;
     name: {
@@ -67,3 +68,7 @@ export interface SettingData {
 }
 
 export type UserDataArr = Array<UserData>;
+export interface DisplayMode {
+    name: string;
+    component: ReturnType<typeof defineComponent>;
+}

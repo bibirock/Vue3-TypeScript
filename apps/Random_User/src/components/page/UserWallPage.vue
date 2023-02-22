@@ -1,16 +1,37 @@
 <template lang='pug'>
 div(:class="'relative'")
     NavBar(:class="'sticky top-0 bg-white'" @setPageSettingData="getPageSettingData")
-    UserCard(:data="userData")
+    keep-alive
+        component(:is="current.views" :key="current.views" :data="userData")
     a-pagination(v-model:current="currentPage" :total="total" :showSizeChanger="false")
 </template>
 
 <script setup lang="ts">
+import type { RequireUserDataParams, SettingData, UserDataArr, DisplayMode } from '@/types/type'
+import { ref, computed, reactive, watchEffect, markRaw, watch } from 'vue';
 import NavBar from '@/components/layout/NavBar.vue'
 import UserCard from '@/components/layout/UserCard.vue'
-import { ref, computed, reactive, watchEffect } from 'vue';
-import type { RequireUserDataParams, SettingData, UserDataArr } from '@/types/type'
+import UserList from '@/components/layout/UserList.vue';
 import { $fecthUserData } from '@/apis/userAPI'
+
+const dispalyMode: Array<DisplayMode> = reactive([
+    {
+        name: 'Card',
+        component: markRaw(UserCard)
+    },
+    {
+        name: 'List',
+        component: markRaw(UserList)
+    }
+]);
+
+function switchView(component: DisplayMode['component']) {
+    current.views = component;
+}
+
+const current = reactive({
+    views: dispalyMode[0].component
+});
 
 const currentPage = ref(1)
 
@@ -43,6 +64,14 @@ const total = computed(() => {
 
 watchEffect(() => {
     getUserData(pageSettingData.userCount, currentPage.value)
+})
+
+watch(() => pageSettingData.dispalyMode, (value) => {
+    if (value) {
+        switchView(UserCard)
+    } else {
+        switchView(UserList)
+    }
 })
 </script>
 <style scoped></style>
