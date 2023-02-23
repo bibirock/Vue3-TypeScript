@@ -3,7 +3,10 @@ import router from '@/router';
 import './style.scss';
 import App from './App.vue';
 
+import { createPinia } from 'pinia';
+const pinia = createPinia();
+
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css';
 
-createApp(App).use(Antd).use(router).mount('#app');
+createApp(App).use(Antd).use(router).use(pinia).mount('#app');
