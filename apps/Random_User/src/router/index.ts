@@ -3,19 +3,23 @@ import { createRouter, createWebHashHistory, RouterOptions, Router, RouteRecordR
 const routes: RouteRecordRaw[] = [
     {
         path: '/',
-        name: 'home-page',
-        props: true,
-        component: () => import('@/components/page/UserWallPage.vue')
+        name: 'all-user-page',
+        component: () => import('@/components/page/UserWallPage.vue'),
+    },
+    {
+        path: '/favorite/',
+        name: 'favorite-page',
+        component: () => import('@/components/page/UserWallPage.vue'),
     },
     {
         path: '/:catchAll(.*)',
-        redirect: '/'
-    }
+        redirect: '/',
+    },
 ];
 
 const option: RouterOptions = {
     history: createWebHashHistory(),
-    routes
+    routes,
 };
 
 const router: Router = createRouter(option);

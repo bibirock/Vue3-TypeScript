@@ -15,7 +15,6 @@ import { onMounted, ref } from 'vue';
 import type { UserDataArr, UserData, } from '@/types/type'
 import { Icon } from '@iconify/vue';
 
-
 type Props = {
     data?: UserDataArr
 }

@@ -62,7 +62,6 @@ export type RequireUserDataParams = {
 };
 
 export interface SettingData {
-    bookMark: string;
     userCount: number;
     dispalyMode: boolean;
 }
