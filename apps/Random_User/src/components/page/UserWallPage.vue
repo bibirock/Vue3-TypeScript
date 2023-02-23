@@ -96,5 +96,25 @@ watch(
         rourer.push({ name: 'all-user-page', query: { q: currentPage.value } });
     },
 );
+
+function getFavoriteList() {
+    const localFavorite = JSON.parse(window.sessionStorage.getItem('favorite') || 'null');
+    if (localFavorite !== null) {
+        return localFavorite;
+    } else {
+        return [];
+    }
+}
+
+watch(
+    () => route.name,
+    () => {
+        if (route.name === 'favorite-page') {
+            userData.value = getFavoriteList();
+        } else {
+            getUserData(pageSettingData.userCount, currentPage.value);
+        }
+    },
+);
 </script>
 <style scoped></style>
