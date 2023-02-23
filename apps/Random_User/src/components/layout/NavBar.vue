@@ -9,12 +9,29 @@ div.h-16.flex.justify-between
             a-space(:class="'m-3'")
                 a-select(ref="select" v-model:value="selected" style="width: 120px")
                     a-select-option(v-for="(option, i) in options" :key="i" :value="option.value") {{ option.text }}
-            a-switch(v-model:checked="pageMode" checked-children="List" un-checked-children="Card")
+            a-switch(v-model:checked="pageMode" checked-children="Card" un-checked-children="List")
 </template>
 <script setup lang="ts">
-import { ref, reactive, watchEffect } from 'vue';
+import { ref, reactive, watch, onMounted } from 'vue';
 import type { SettingData } from '@/types/type';
 const emit = defineEmits(['setPageSettingData']);
+
+onMounted(() => {
+    initSetting();
+    emitPageSettingData();
+});
+
+const selected = ref(30);
+const pageMode = ref(true);
+
+function initSetting() {
+    const previousSetting = sessionStorage.getItem('pageSetting' || 'null');
+    if (previousSetting !== null) {
+        const setting: SettingData = JSON.parse(sessionStorage.getItem('pageSetting' || 'null') as string);
+        selected.value = setting.userCount;
+        pageMode.value = setting.dispalyMode;
+    }
+}
 
 const options = reactive([
     { text: 10, value: 10 },
@@ -25,18 +42,18 @@ const options = reactive([
 function emitPageSettingData() {
     emit('setPageSettingData', pageSettingData);
 }
-
-const selected = ref(30);
-const pageMode = ref(true);
 const pageSettingData: SettingData = reactive({
     userCount: selected,
     dispalyMode: pageMode,
 });
 
-watchEffect(() => {
-    if (pageSettingData) {
+watch(
+    () => pageSettingData,
+    () => {
         emitPageSettingData();
-    }
-});
+        sessionStorage.setItem('pageSetting', JSON.stringify(pageSettingData));
+    },
+    { deep: true },
+);
 </script>
 <style scoped></style>
