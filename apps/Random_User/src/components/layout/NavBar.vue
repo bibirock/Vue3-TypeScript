@@ -1,10 +1,10 @@
 <template lang="pug">
 div.h-16.flex.justify-between
     div(:class="'flex basis-1/2'")
-        div(:class="'w-1/4 flex justify-around items-center ml-5'")
-            router-link.text-black(:to="{ name: 'all-user-page' }") {{ "ALL" }}
-            router-link.text-black(:to="{ name: 'favorite-page' }") {{ "Favorite" }}
-    div(:class="'flex justify-end items-center basis-1/2'")
+        div(:class="'set-item-around w-1/4 ml-5'")
+            router-link.text-black(:to="{ name: 'all-user-page' }" active-class="text-cyan-500") {{ "ALL" }}
+            router-link.text-black(:to="{ name: 'favorite-page' }" active-class="text-cyan-500") {{ "Favorite" }}
+    div(:class="'set-item-end basis-1/2'")
         div.mr-5
             a-space(:class="'m-3'")
                 a-select(ref="select" v-model:value="selected" style="width: 120px")
@@ -26,7 +26,6 @@ function emitPageSettingData() {
     emit('setPageSettingData', pageSettingData);
 }
 
-const bookMark = ref('ALL');
 const selected = ref(30);
 const pageMode = ref(true);
 const pageSettingData: SettingData = reactive({

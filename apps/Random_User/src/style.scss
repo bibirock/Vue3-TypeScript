@@ -6,16 +6,23 @@
     .set-item-center {
         @apply flex justify-center items-center;
     }
+
     .set-item-between {
         @apply flex justify-between items-center;
     }
+
     .set-item-around {
         @apply flex justify-around items-center;
     }
+
     .set-item-start {
         @apply flex justify-start items-center;
     }
 
+    .set-item-end {
+        @apply flex justify-end items-center;
+    }
+    
     .user-card {
         @apply m-2 rounded-lg w-fit max-w-[136px] overflow-hidden cursor-pointer bg-white hover:drop-shadow-md  hover:scale-105;
         .user-card-items {
