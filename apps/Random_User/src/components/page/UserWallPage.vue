@@ -9,11 +9,27 @@ div(:class="'relative'")
 
 <script setup lang="ts">
 import type { RequireUserDataParams, SettingData, UserDataArr, DisplayMode } from '@/types/type'
-import { ref, computed, reactive, watchEffect, markRaw, watch } from 'vue';
+import { ref, computed, reactive, watchEffect, markRaw, watch, onMounted } from 'vue';
 import NavBar from '@/components/layout/NavBar.vue'
 import UserCard from '@/components/layout/UserCard.vue'
 import UserList from '@/components/layout/UserList.vue';
 import { $fecthUserData } from '@/apis/userAPI'
+import { useRoute, useRouter } from 'vue-router';
+const route = useRoute();
+const rourer = useRouter()
+
+const currentPage = ref(1)
+
+onMounted(() => {
+    getCurrentPage()
+})
+
+function getCurrentPage() {
+    if (route.query.q !== undefined) {
+        const query = route.query.q
+        currentPage.value = parseInt(query as string)
+    }
+}
 
 const dispalyMode: Array<DisplayMode> = reactive([
     {
@@ -33,8 +49,6 @@ function switchView(component: DisplayMode['component']) {
 const current = reactive({
     views: dispalyMode[0].component
 });
-
-const currentPage = ref(1)
 
 const pageSettingData: SettingData = reactive({
     bookMark: 'ALL',
@@ -72,6 +86,10 @@ watch(() => pageSettingData.dispalyMode, (value) => {
     } else {
         switchView(UserList)
     }
+})
+
+watch(() => currentPage.value, () => {
+    rourer.push({ name: 'home-page', query: { q: currentPage.value } })
 })
 </script>
 <style scoped></style>

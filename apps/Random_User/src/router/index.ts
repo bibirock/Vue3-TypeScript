@@ -3,10 +3,8 @@ import { createRouter, createWebHashHistory, RouterOptions, Router, RouteRecordR
 const routes: RouteRecordRaw[] = [
     {
         path: '/',
-        name: 'login',
-        meta: {
-            isRequiresAuth: false
-        },
+        name: 'home-page',
+        props: true,
         component: () => import('@/components/page/UserWallPage.vue')
     },
     {

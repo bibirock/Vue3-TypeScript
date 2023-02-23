@@ -1,12 +1,9 @@
 
 <template lang="pug">
-#page
-  UserWall
-
+router-view
 </template>
 
 <script setup lang="ts">
-import UserWall from '@/components/page/UserWallPage.vue'
 </script>
 
 <style scoped></style>
