@@ -7,7 +7,7 @@ div.card-list(:class="'p-11 mx-auto'")
                 .user-card-info
                     span.user-name {{ user.name.first }}
                     Icon.favorite-icon(v-if="checkFavoriteUser(user.login.uuid)" @click="removeFavorite(user.login.uuid)" icon="mdi:heart" color="red" width="25" height="25")
-                    Icon.favorite-icon(v-else @click="addFavorite(user.login.uuid)" icon="mdi:cards-heart-outline" color="white" width="25" height="25")
+                    Icon.favorite-icon(v-else @click="addFavorite(user)" icon="mdi:cards-heart-outline" color="white" width="25" height="25")
 </template>
 
 <script setup lang="ts">
@@ -15,7 +15,6 @@ import { onMounted, ref } from 'vue';
 import type { UserDataArr, UserData, } from '@/types/type'
 import { Icon } from '@iconify/vue';
 
-type UserId = UserData['login']['uuid']
 
 type Props = {
     data?: UserDataArr
@@ -26,25 +25,29 @@ onMounted(() => {
     getFavoriteList()
 })
 
-const favorite = ref<Array<UserId>>()
+type UserId = UserData['login']['uuid']
+
+const favorite = ref<Array<UserData>>()
 function getFavoriteList() {
-    const localFavorite = JSON.parse(window.sessionStorage.getItem('favorite') || '{}')
+    const localFavorite = JSON.parse(window.sessionStorage.getItem('favorite') || 'null')
     if (localFavorite !== null) {
         favorite.value = localFavorite
+    } else {
+        favorite.value = []
     }
 }
 
-function addFavorite(id: UserId) {
-    favorite.value?.push(id)
+function addFavorite(userData: UserData) {
+    favorite.value?.push(userData)
     window.sessionStorage.setItem('favorite', JSON.stringify(favorite.value))
 }
 
 function checkFavoriteUser(id: UserId) {
-    return favorite.value?.includes(id)
+    return favorite.value?.some(e => e.login.uuid === id)
 }
 
 function removeFavorite(id: UserId) {
-    const index = favorite.value?.findIndex((e) => e === id)
+    const index = favorite.value?.findIndex((e) => e.login.uuid === id)
     favorite.value?.splice(index as number, 1)
     window.sessionStorage.setItem('favorite', JSON.stringify(favorite.value))
 } 
