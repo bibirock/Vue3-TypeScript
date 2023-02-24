@@ -1,10 +1,15 @@
 <template lang="pug">
 div.card-list(:class="'p-11'")
-    .user-area(:class="'mx-auto w-11/12 flex flex-wrap flex-row justify-start'")
-        .file(v-for='(user,i) in data' @click="" :class="'m-2'")
-            .img-area(:class="'mx-auto border border-sky-500 max-w-[136px]'")
-                //- img(:class="'p-1 '" :src="user?.picture.large" referrerPolicy="no-referrer")
-                span(:class="'text-center block'") {{ user.name.title }}
+    .user-area(:class="'mx-auto w-11/12 set-item-center flex-col'")
+        .user-list.cursor-pointer(v-for='(user,i) in data' @click="")
+            .info-area
+                img(:src="user?.picture.large" referrerPolicy="no-referrer")
+                .user-info
+                    span {{ "Name : " + user.name.first }}
+                    span {{ "Country : " + user.location.country }}
+                    span {{ "Gender : " + user.gender }}
+                Icon.favorite-icon(v-if="$checkFavoriteUser(user.login.uuid)" @click="$removeFavorite(user.login.uuid)" icon="mdi:heart" color="red" width="50" height="50")
+                Icon.favorite-icon(v-else @click="$addFavorite(user)" icon="mdi:cards-heart-outline" width="50" height="50")
 </template>
 
 <script setup lang="ts">
@@ -19,6 +24,25 @@ type Props = {
 onMounted(() => {
     $getFavoriteList();
 });
+
 defineProps<Props>();
 </script>
-<style scoped></style>
+
+<style scoped lang="scss">
+.user-list {
+    @apply m-2 w-[50%] rounded-lg border overflow-hidden;
+    .info-area {
+        @apply mx-auto flex;
+        .user-info {
+            @apply basis-1/2 p-5 flex flex-col justify-between;
+
+            span {
+                @apply block text-left whitespace-nowrap;
+            }
+        }
+        .favorite-icon {
+            @apply basis-[100px] self-center;
+        }
+    }
+}
+</style>

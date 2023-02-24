@@ -24,4 +24,23 @@ onMounted(() => {
     $getFavoriteList();
 });
 </script>
-<style scoped></style>
+
+<style scoped lang="scss">
+.user-area {
+    .user-card {
+        @apply m-2 rounded-lg w-fit max-w-[136px] overflow-hidden cursor-pointer bg-white hover:drop-shadow-md  hover:scale-105;
+        .user-card-items {
+            @apply mx-auto w-full block relative;
+        }
+        .user-card-info {
+            @apply set-item-center absolute bottom-0 w-full h-7 pb-1 backdrop-blur-sm;
+        }
+        .user-name {
+            @apply text-center text-white mr-4;
+        }
+        .favorite-icon {
+            @apply hover:scale-110;
+        }
+    }
+}
+</style>
