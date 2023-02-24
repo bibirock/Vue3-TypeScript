@@ -8,10 +8,17 @@ div.card-list(:class="'p-11'")
 </template>
 
 <script setup lang="ts">
+import { $addFavorite, $checkFavoriteUser, $removeFavorite, $getFavoriteList } from '@/lib/userWallPageUtils';
 import type { UserDataArr } from '@/types/type';
+import { onMounted } from 'vue';
+
 type Props = {
     data?: UserDataArr;
 };
+
+onMounted(() => {
+    $getFavoriteList();
+});
 defineProps<Props>();
 </script>
 <style scoped></style>
