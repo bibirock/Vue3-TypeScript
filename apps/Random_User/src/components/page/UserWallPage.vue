@@ -1,30 +1,31 @@
 <template lang="pug">
 div(:class="'relative'")
-    NavBar(:class="'sticky top-0 bg-white z-10'")
-    keep-alive
-        component(:is="current.views" :key="current.views" :data="userData")
-    div(:class="'set-item-center pb-4'")
+    div(:class="'sticky top-0 bg-white z-10'")
+        NavBar
+    div(:class="'h-[600px] overflow-y-auto'")
+        keep-alive
+            component(:is="current.views" :key="current.views" :data="userData")
+    div(:class="'set-item-center mt-5'")
         a-pagination(v-model:current="currentPage" :total="total" :showSizeChanger="false" :class="''")
 </template>
 
 <script setup lang="ts">
 import type { RequireUserDataParams, UserDataArr, DisplayMode } from '@/types/type';
-import { ref, computed, reactive, watchEffect, markRaw, watch, onMounted } from 'vue';
-import NavBar from '@/components/layout/NavBar.vue';
+import { $storeSelectedCount, $storePageMode } from '@/lib/userWallPageUtils';
+import { ref, computed, reactive, markRaw, watch, onMounted } from 'vue';
 import UserCard from '@/components/layout/UserCard.vue';
 import UserList from '@/components/layout/UserList.vue';
-import { $fecthUserData } from '@/apis/userAPI';
+import NavBar from '@/components/layout/NavBar.vue';
 import { useRoute, useRouter } from 'vue-router';
-import { userWallSetting } from '@/store';
-const $store = userWallSetting();
+import { $fecthUserData } from '@/apis/userAPI';
+
 const route = useRoute();
 const rourer = useRouter();
-
 const currentPage = ref(1);
 
 onMounted(() => {
     getCurrentPage();
-    getUserData(selectedCount.value, currentPage.value)
+    getUserData($storeSelectedCount.value, currentPage.value);
 });
 
 function getCurrentPage() {
@@ -64,30 +65,15 @@ async function getUserData(userCount: number, pages: number) {
 }
 
 const total = computed(() => {
-    return 3010 / $store.userCount;
+    return 3010 / $storeSelectedCount.value;
 });
 
-const selectedCount = computed({
-    get() {
-        return $store.userCount;
-    },
-    set(newValue) {
-        $store.updateUserCount(newValue);
+watch(
+    () => [$storeSelectedCount.value, currentPage.value],
+    () => {
+        getUserData($storeSelectedCount.value, currentPage.value);
     }
-});
-
-const pageMode = computed({
-    get() {
-        return $store.getIsDisplayMode;
-    },
-    set(newValue) {
-        $store.updateDisplayMode(newValue ? 'Card' : 'List');
-    }
-});
-
-watch(() => [selectedCount.value, currentPage.value], () => {
-    getUserData(selectedCount.value, currentPage.value);
-})
+);
 
 watch(
     () => currentPage.value,
@@ -97,7 +83,7 @@ watch(
 );
 
 watch(
-    () => pageMode.value,
+    () => $storePageMode.value,
     (mode) => {
         if (mode) {
             switchView(UserCard);
@@ -114,7 +100,7 @@ watch(
         if (route.name === 'favorite-page') {
             userData.value = getFavoriteList();
         } else {
-            getUserData(selectedCount.value, currentPage.value);
+            getUserData($storeSelectedCount.value, currentPage.value);
         }
     }
 );
