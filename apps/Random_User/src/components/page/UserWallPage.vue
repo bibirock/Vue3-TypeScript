@@ -1,6 +1,6 @@
 <template lang="pug">
 div(:class="'relative'")
-    NavBar(:class="'sticky top-0 bg-white z-10'" @setPageSettingData="getPageSettingData")
+    NavBar(:class="'sticky top-0 bg-white z-10'")
     keep-alive
         component(:is="current.views" :key="current.views" :data="userData")
     div(:class="'set-item-center pb-4'")
@@ -8,13 +8,15 @@ div(:class="'relative'")
 </template>
 
 <script setup lang="ts">
-import type { RequireUserDataParams, SettingData, UserDataArr, DisplayMode } from '@/types/type';
+import type { RequireUserDataParams, UserDataArr, DisplayMode } from '@/types/type';
 import { ref, computed, reactive, watchEffect, markRaw, watch, onMounted } from 'vue';
 import NavBar from '@/components/layout/NavBar.vue';
 import UserCard from '@/components/layout/UserCard.vue';
 import UserList from '@/components/layout/UserList.vue';
 import { $fecthUserData } from '@/apis/userAPI';
 import { useRoute, useRouter } from 'vue-router';
+import { userWallSetting } from '@/store';
+const $store = userWallSetting();
 const route = useRoute();
 const rourer = useRouter();
 
@@ -22,6 +24,7 @@ const currentPage = ref(1);
 
 onMounted(() => {
     getCurrentPage();
+    getUserData(selectedCount.value, currentPage.value)
 });
 
 function getCurrentPage() {
@@ -34,12 +37,12 @@ function getCurrentPage() {
 const dispalyMode: Array<DisplayMode> = reactive([
     {
         name: 'Card',
-        component: markRaw(UserCard),
+        component: markRaw(UserCard)
     },
     {
         name: 'List',
-        component: markRaw(UserList),
-    },
+        component: markRaw(UserList)
+    }
 ]);
 
 function switchView(component: DisplayMode['component']) {
@@ -47,54 +50,73 @@ function switchView(component: DisplayMode['component']) {
 }
 
 const current = reactive({
-    views: dispalyMode[0].component,
-});
-
-const pageSettingData: SettingData = reactive({
-    bookMark: 'ALL',
-    dispalyMode: true,
-    userCount: 30,
+    views: dispalyMode[0].component
 });
 
 const userData = ref<UserDataArr>();
 async function getUserData(userCount: number, pages: number) {
     const require: RequireUserDataParams = {
         results: userCount,
-        page: pages,
+        page: pages
     };
     const res = await $fecthUserData(require);
     userData.value = res.results;
 }
 
-function getPageSettingData(pageSetting: SettingData) {
-    pageSettingData.dispalyMode = pageSetting.dispalyMode;
-    pageSettingData.userCount = pageSetting.userCount;
-}
-
 const total = computed(() => {
-    return 3010 / pageSettingData.userCount;
+    return 3010 / $store.userCount;
 });
 
-watchEffect(() => {
-    getUserData(pageSettingData.userCount, currentPage.value);
-});
-
-watch(
-    () => pageSettingData.dispalyMode,
-    (value) => {
-        if (value) {
-            switchView(UserCard);
-        } else {
-            switchView(UserList);
-        }
+const selectedCount = computed({
+    get() {
+        return $store.userCount;
     },
-);
+    set(newValue) {
+        $store.updateUserCount(newValue);
+    }
+});
+
+const pageMode = computed({
+    get() {
+        return $store.getIsDisplayMode;
+    },
+    set(newValue) {
+        $store.updateDisplayMode(newValue ? 'Card' : 'List');
+    }
+});
+
+watch(() => [selectedCount.value, currentPage.value], () => {
+    getUserData(selectedCount.value, currentPage.value);
+})
 
 watch(
     () => currentPage.value,
     () => {
         rourer.push({ name: 'all-user-page', query: { q: currentPage.value } });
+    }
+);
+
+watch(
+    () => pageMode.value,
+    (mode) => {
+        if (mode) {
+            switchView(UserCard);
+        } else {
+            switchView(UserList);
+        }
     },
+    { deep: true }
+);
+
+watch(
+    () => route.name,
+    () => {
+        if (route.name === 'favorite-page') {
+            userData.value = getFavoriteList();
+        } else {
+            getUserData(selectedCount.value, currentPage.value);
+        }
+    }
 );
 
 function getFavoriteList() {
@@ -105,16 +127,5 @@ function getFavoriteList() {
         return [];
     }
 }
-
-watch(
-    () => route.name,
-    () => {
-        if (route.name === 'favorite-page') {
-            userData.value = getFavoriteList();
-        } else {
-            getUserData(pageSettingData.userCount, currentPage.value);
-        }
-    },
-);
 </script>
 <style scoped></style>
