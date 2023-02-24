@@ -12,50 +12,19 @@ div.h-16.flex.justify-between
             a-switch(v-model:checked="pageMode" checked-children="Card" un-checked-children="List")
 </template>
 <script setup lang="ts">
-import { ref, reactive, watch, onMounted, computed } from 'vue';
+import { $storeSelectedCount, $storePageMode } from '@/lib/userWallPageUtils';
+import { reactive, onMounted, watch, nextTick } from 'vue';
+import { Icon } from '@iconify/vue';
 import type { SettingData } from '@/types/type';
 import { userWallSetting } from '@/store';
 const emit = defineEmits(['setPageSettingData']);
 
 const $store = userWallSetting();
+
 onMounted(() => {
     initSetting();
     emitPageSettingData();
 });
-
-const selected = ref(30);
-
-const selectedCount = computed({
-    get() {
-        return $store.userCount;
-    },
-    set(newValue) {
-        $store.updateUserCount(newValue);
-    }
-});
-
-const pageMode = computed({
-    get() {
-        return $store.getIsDisplayMode;
-    },
-    set(newValue) {
-        $store.updateDisplayMode(newValue ? 'Card' : 'List');
-    }
-});
-
-function initSetting() {
-    const previousSetting = sessionStorage.getItem('pageSetting' || 'null');
-    if (previousSetting !== null) {
-        const setting: SettingData = JSON.parse(sessionStorage.getItem('pageSetting' || 'null') as string);
-        $store.updateUserCount(setting.userCount);
-        $store.updateDisplayMode(pageMode.value ? 'Card' : 'List');
-        selected.value = setting.userCount;
-        pageMode.value = setting.dispalyMode;
-    } else {
-        $store.updateUserCount(30);
-        $store.updateDisplayMode('Card');
-    }
-}
 
 const options = reactive([
     { text: 10, value: 10 },
@@ -63,19 +32,39 @@ const options = reactive([
     { text: 50, value: 50 }
 ]);
 
-function emitPageSettingData() {
-    emit('setPageSettingData', pageSettingData);
+function initSetting() {
+    const previousSetting = sessionStorage.getItem('pageSetting' || 'null');
+    if (previousSetting !== null) {
+        getPreviousSetting(previousSetting);
+    } else {
+        setDefaultSetting();
+    }
+}
+
+function getPreviousSetting(previousSetting: string) {
+    const setting = JSON.parse(previousSetting) as SettingData;
+    $store.updateUserCount(setting.userCount);
+    $store.updateDisplayMode(setting.dispalyMode ? 'Card' : 'List');
+}
+
+function setDefaultSetting() {
+    $store.updateUserCount(30);
+    $store.updateDisplayMode('Card');
 }
 const pageSettingData: SettingData = reactive({
     userCount: selectedCount.value,
     dispalyMode: pageMode
 });
 
+// 因為需等待 DOM 更新後才能拿到新的值，因此需使用 nextTick()
 watch(
-    () => pageSettingData,
-    () => {
-        console.log(pageSettingData);
-        emitPageSettingData();
+    () => [$storeSelectedCount, $storePageMode],
+    async () => {
+        await nextTick();
+        const pageSettingData = {
+            userCount: $storeSelectedCount.value,
+            dispalyMode: $storePageMode.value
+        };
         sessionStorage.setItem('pageSetting', JSON.stringify(pageSettingData));
     },
     { deep: true }
