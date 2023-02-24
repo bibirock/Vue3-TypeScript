@@ -18,7 +18,6 @@ import { $storeSelectedCount, $storePageMode } from '@/lib/userWallPageUtils';
 import { reactive, onMounted, watch, nextTick } from 'vue';
 import type { SettingData } from '@/types/type';
 import { userWallSetting } from '@/store';
-import { Icon } from '@iconify/vue';
 const $store = userWallSetting();
 
 onMounted(() => {

@@ -9,4 +9,5 @@ const pinia = createPinia();
 import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css';
 
-createApp(App).use(Antd).use(router).use(pinia).mount('#app');
+import { Icon } from '@iconify/vue';
+createApp(App).use(Antd).use(router).use(pinia).component('Icon', Icon).mount('#app');
