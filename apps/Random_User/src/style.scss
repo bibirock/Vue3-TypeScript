@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@base {
+    html {
+        @apply overflow-y-scroll;
+    }
+}
+
 @layer components {
     .set-item-center {
         @apply flex justify-center items-center;
