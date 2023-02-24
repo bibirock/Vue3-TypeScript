@@ -9,13 +9,16 @@ type StoreData = {
 
 export const userWallSetting = defineStore('linStore', {
     state: (): StoreData => ({
-        displayMode: '',
-        userCount: 0,
+        displayMode: 'Card',
+        userCount: 30,
         favoriteUserArr: []
     }),
     getters: {
         getIsDisplayMode(state) {
             return state.displayMode === 'Card' ? true : false;
+        },
+        getUserCount(state) {
+            return state.userCount
         }
     },
     actions: {
