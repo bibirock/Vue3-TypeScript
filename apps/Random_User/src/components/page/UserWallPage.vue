@@ -5,8 +5,8 @@ div(:class="'relative'")
     div(:class="'h-[600px] overflow-y-auto'")
         keep-alive
             component(:is="current.views" :key="current.views" :data="userData")
-    div(:class="'set-item-center mt-5'")
-        a-pagination(v-model:current="currentPage" :total="total" :showSizeChanger="false" :class="''")
+    div(:class="'set-item-center mt-5 pb-5'")
+        a-pagination(v-model:current="currentPage" :total="totalPages" :showSizeChanger="false" :class="''")
 </template>
 
 <script setup lang="ts">
@@ -20,7 +20,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { $fecthUserData } from '@/apis/userAPI';
 
 const route = useRoute();
-const rourer = useRouter();
+const router = useRouter();
 const currentPage = ref(1);
 
 onMounted(() => {
@@ -64,8 +64,14 @@ async function getUserData(userCount: number, pages: number) {
     userData.value = res.results;
 }
 
-const total = computed(() => {
-    return 3010 / $storeSelectedCount.value;
+const totalPages = computed(() => {
+    let pageCount;
+    if (route.name === 'all-user-page') {
+        pageCount = 3010 / $storeSelectedCount.value;
+    } else {
+        pageCount = $getFavoriteList().length / $storeSelectedCount.value;
+    }
+    return pageCount;
 });
 
 watch(
@@ -78,7 +84,7 @@ watch(
 watch(
     () => currentPage.value,
     () => {
-        rourer.push({ name: 'all-user-page', query: { q: currentPage.value } });
+        router.push({ name: 'all-user-page', query: { q: currentPage.value } });
     }
 );
 
@@ -98,14 +104,14 @@ watch(
     () => route.name,
     () => {
         if (route.name === 'favorite-page') {
-            userData.value = getFavoriteList();
+            userData.value = $getFavoriteList();
         } else {
             getUserData($storeSelectedCount.value, currentPage.value);
         }
     }
 );
 
-function getFavoriteList() {
+function $getFavoriteList(): [] {
     const localFavorite = JSON.parse(window.sessionStorage.getItem('favorite') || 'null');
     if (localFavorite !== null) {
         return localFavorite;

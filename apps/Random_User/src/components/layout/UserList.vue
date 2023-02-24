@@ -1,5 +1,5 @@
 <template lang="pug">
-div.card-list(:class="'p-11'")
+div.card-list(:class="'p-2 lg:p-11'")
     .user-area(:class="'mx-auto w-11/12 set-item-center flex-col'")
         .user-list.cursor-pointer(v-for='(user,i) in data' @click="")
             .info-area
@@ -30,7 +30,7 @@ defineProps<Props>();
 
 <style scoped lang="scss">
 .user-list {
-    @apply m-2 w-[50%] rounded-lg border overflow-hidden;
+    @apply m-2 w-full rounded-lg border overflow-hidden md:w-[60%] lg:w-[50%];
     .info-area {
         @apply mx-auto flex;
         .user-info {
@@ -41,7 +41,7 @@ defineProps<Props>();
             }
         }
         .favorite-icon {
-            @apply basis-[100px] self-center;
+            @apply basis-[100px] self-center flex-shrink-0;
         }
     }
 }
