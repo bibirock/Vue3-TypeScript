@@ -5,25 +5,24 @@ div.h-16.flex.justify-between
             router-link.text-black(:to="{ name: 'all-user-page' }" active-class="text-cyan-500") {{ "ALL" }}
             router-link.text-black(:to="{ name: 'favorite-page' }" active-class="text-cyan-500") {{ "Favorite" }}
     div(:class="'set-item-end basis-1/2'")
-        div.mr-5
+        div.set-item-center.mr-5
             a-space(:class="'m-3'")
-                a-select(ref="select" v-model:value="selectedCount" style="width: 120px")
+                a-select(ref="select" v-model:value="$storeSelectedCount" style="width: 120px")
                     a-select-option(v-for="(option, i) in options" :key="i" :value="option.value") {{ option.text }}
-            a-switch(v-model:checked="pageMode" checked-children="Card" un-checked-children="List")
+            div(:class="'set-item-around w-20'")
+                Icon.inline-block.cursor-pointer(:class="{ 'text-cyan-500': $storePageMode }" @click="$storePageMode = true" icon="material-symbols:grid-view-rounded" width="24" height="24" )
+                Icon.inline-block.cursor-pointer(:class="{ 'text-cyan-500': !$storePageMode }" @click="$storePageMode = false" icon="material-symbols:format-list-bulleted-sharp" width="24" height="24" )
 </template>
 <script setup lang="ts">
 import { $storeSelectedCount, $storePageMode } from '@/lib/userWallPageUtils';
 import { reactive, onMounted, watch, nextTick } from 'vue';
-import { Icon } from '@iconify/vue';
 import type { SettingData } from '@/types/type';
 import { userWallSetting } from '@/store';
-const emit = defineEmits(['setPageSettingData']);
-
+import { Icon } from '@iconify/vue';
 const $store = userWallSetting();
 
 onMounted(() => {
     initSetting();
-    emitPageSettingData();
 });
 
 const options = reactive([
@@ -51,10 +50,6 @@ function setDefaultSetting() {
     $store.updateUserCount(30);
     $store.updateDisplayMode('Card');
 }
-const pageSettingData: SettingData = reactive({
-    userCount: selectedCount.value,
-    dispalyMode: pageMode
-});
 
 // 因為需等待 DOM 更新後才能拿到新的值，因此需使用 nextTick()
 watch(
