@@ -1,10 +1,10 @@
 <template lang="pug">
 div.card-list(:class="'p-2 lg:p-11'")
     .user-area(:class="'mx-auto w-11/12 set-item-center flex-col'")
-        .user-list.cursor-pointer(v-for='(user,i) in data' @click="")
-            .info-area
+        .user-list.cursor-pointer(v-for='(user,i) in data' @click="" :class="'m-2 w-full rounded-lg border overflow-hidden md:w-[60%] lg:w-[50%] hover:drop-shadow-md hover:scale-105 bg-white'")
+            .info-area(:class="'mx-auto flex'")
                 img(:src="user?.picture.large" referrerPolicy="no-referrer")
-                .user-info
+                .user-info(:class="'basis-1/2 p-5 flex flex-col justify-between'")
                     span {{ "Name : " + user.name.first }}
                     span {{ "Country : " + user.location.country }}
                     span {{ "Gender : " + user.gender }}
@@ -17,6 +17,8 @@ import { $addFavorite, $checkFavoriteUser, $removeFavorite, $getFavoriteList } f
 import type { UserDataArr } from '@/types/type';
 import { onMounted } from 'vue';
 
+defineProps<Props>();
+
 type Props = {
     data?: UserDataArr;
 };
@@ -24,25 +26,13 @@ type Props = {
 onMounted(() => {
     $getFavoriteList();
 });
-
-defineProps<Props>();
 </script>
 
 <style scoped lang="scss">
-.user-list {
-    @apply m-2 w-full rounded-lg border overflow-hidden md:w-[60%] lg:w-[50%];
-    .info-area {
-        @apply mx-auto flex;
-        .user-info {
-            @apply basis-1/2 p-5 flex flex-col justify-between;
-
-            span {
-                @apply block text-left whitespace-nowrap;
-            }
-        }
-        .favorite-icon {
-            @apply basis-[100px] self-center flex-shrink-0;
-        }
-    }
+span {
+    @apply block text-left whitespace-nowrap;
+}
+.favorite-icon {
+    @apply basis-[100px] self-center flex-shrink-0 hover:scale-105;
 }
 </style>
