@@ -15,7 +15,6 @@ teleport(to="body")
 
 <script lang="ts" setup>
 import type { UserData } from '@/types/type';
-const emit = defineEmits(['closeModal']);
 
 type Props = {
     user?: UserData;
@@ -23,6 +22,7 @@ type Props = {
 
 defineProps<Props>();
 
+const emit = defineEmits(['closeModal']);
 function closeModal() {
     emit('closeModal');
 }

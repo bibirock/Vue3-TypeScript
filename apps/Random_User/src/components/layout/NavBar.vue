@@ -24,12 +24,6 @@ onMounted(() => {
     initSetting();
 });
 
-const options = reactive([
-    { text: 10, value: 10 },
-    { text: 30, value: 30 },
-    { text: 50, value: 50 }
-]);
-
 function initSetting() {
     const previousSetting = sessionStorage.getItem('pageSetting' || 'null');
     if (previousSetting !== null) {
@@ -38,6 +32,12 @@ function initSetting() {
         setDefaultSetting();
     }
 }
+
+const options = reactive([
+    { text: 10, value: 10 },
+    { text: 30, value: 30 },
+    { text: 50, value: 50 }
+]);
 
 function getPreviousSetting(previousSetting: string) {
     const setting = JSON.parse(previousSetting) as SettingData;

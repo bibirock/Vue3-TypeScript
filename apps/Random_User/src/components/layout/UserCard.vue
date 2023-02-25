@@ -15,20 +15,21 @@ import { $addFavorite, $checkFavoriteUser, $removeFavorite, $getFavoriteList } f
 import type { UserDataArr, UserData } from '@/types/type';
 import { onMounted } from 'vue';
 
+onMounted(() => {
+    $getFavoriteList();
+});
+
+type Props = {
+    data?: UserDataArr;
+};
+
+defineProps<Props>();
+
 const emit = defineEmits(['sendUseData']);
 
 function sendUserData(userData: UserData) {
     emit('sendUseData', userData);
 }
-
-type Props = {
-    data?: UserDataArr;
-};
-defineProps<Props>();
-
-onMounted(() => {
-    $getFavoriteList();
-});
 </script>
 
 <style scoped lang="scss">

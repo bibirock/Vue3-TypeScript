@@ -1,37 +1,65 @@
 <template lang="pug">
 div(:class="'relative'")
     div(:class="'sticky top-0 bg-white z-10'")
-        NavBar
+        nav-bar
     div(:class="'h-[600px] overflow-y-auto'")
         keep-alive
-            component(:is="current.views" :key="current.views" :data="userData")
+            component(:is="current.views" :key="current.views" :data="userData" @sendUseData="getSelectUserAndOpenModal")
     div(:class="'set-item-center mt-5 pb-5'")
-        a-pagination(v-model:current="currentPage" :total="totalPages" :showSizeChanger="false" :class="''")
+        a-pagination(v-model:current="currentPage" :total="totalPages" :showSizeChanger="false")
+    user-detail-modal(v-if="isShowModal" @closeModal="isShowModal = false" :user="selectUser")
 </template>
 
 <script setup lang="ts">
-import type { RequireUserDataParams, UserDataArr, DisplayMode } from '@/types/type';
+import type { RequireUserDataParams, UserDataArr, DisplayMode, UserData } from '@/types/type';
 import { $storeSelectedCount, $storePageMode } from '@/lib/userWallPageUtils';
-import { ref, computed, reactive, markRaw, watch, onMounted } from 'vue';
+import { ref, computed, reactive, markRaw, watch, onMounted, nextTick } from 'vue';
 import UserCard from '@/components/layout/UserCard.vue';
 import UserList from '@/components/layout/UserList.vue';
 import NavBar from '@/components/layout/NavBar.vue';
+import UserDetailModal from '@/components/modal/UserDetailModal.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { $fecthUserData } from '@/apis/userAPI';
 
 const route = useRoute();
 const router = useRouter();
-const currentPage = ref(1);
+
+const selectUser = ref<UserData>();
+const isShowModal = ref(false);
+function getSelectUserAndOpenModal(userData: UserData) {
+    selectUser.value = userData;
+    isShowModal.value = true;
+}
 
 onMounted(() => {
     getCurrentPage();
     getUserData($storeSelectedCount.value, currentPage.value);
 });
 
+const currentPage = ref(1);
 function getCurrentPage() {
     if (route.query.q !== undefined) {
         const query = route.query.q;
         currentPage.value = parseInt(query as string);
+    }
+}
+
+const userData = ref<UserDataArr>();
+async function getUserData(userCount: number, pages: number) {
+    const require: RequireUserDataParams = {
+        results: userCount,
+        page: pages
+    };
+    const res = await $fecthUserData(require);
+    userData.value = res.results;
+}
+
+function $getFavoriteList(): [] {
+    const localFavorite = JSON.parse(window.sessionStorage.getItem('favorite') || 'null');
+    if (localFavorite !== null) {
+        return localFavorite;
+    } else {
+        return [];
     }
 }
 
@@ -53,16 +81,6 @@ function switchView(component: DisplayMode['component']) {
 const current = reactive({
     views: dispalyMode[0].component
 });
-
-const userData = ref<UserDataArr>();
-async function getUserData(userCount: number, pages: number) {
-    const require: RequireUserDataParams = {
-        results: userCount,
-        page: pages
-    };
-    const res = await $fecthUserData(require);
-    userData.value = res.results;
-}
 
 const totalPages = computed(() => {
     let pageCount;
@@ -110,14 +128,5 @@ watch(
         }
     }
 );
-
-function $getFavoriteList(): [] {
-    const localFavorite = JSON.parse(window.sessionStorage.getItem('favorite') || 'null');
-    if (localFavorite !== null) {
-        return localFavorite;
-    } else {
-        return [];
-    }
-}
 </script>
 <style scoped></style>

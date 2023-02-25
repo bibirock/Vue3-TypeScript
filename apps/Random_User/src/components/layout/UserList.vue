@@ -1,7 +1,7 @@
 <template lang="pug">
 div.card-list(:class="'p-2 lg:p-11'")
     .user-area(:class="'mx-auto w-11/12 set-item-center flex-col'")
-        .user-list.cursor-pointer(v-for='(user,i) in data' @click="" :class="'m-2 w-full rounded-lg border overflow-hidden md:w-[60%] lg:w-[50%] hover:drop-shadow-md hover:scale-105 bg-white'")
+        .user-list.cursor-pointer(v-for='(user,i) in data' @click="sendUserData(user)" :class="'m-2 w-full rounded-lg border overflow-hidden md:w-[60%] lg:w-[50%] hover:drop-shadow-md hover:scale-105 bg-white'")
             .info-area(:class="'mx-auto flex'")
                 img(:src="user?.picture.large" referrerPolicy="no-referrer")
                 .user-info(:class="'basis-1/2 p-5 flex flex-col justify-between'")
@@ -14,18 +14,24 @@ div.card-list(:class="'p-2 lg:p-11'")
 
 <script setup lang="ts">
 import { $addFavorite, $checkFavoriteUser, $removeFavorite, $getFavoriteList } from '@/lib/userWallPageUtils';
-import type { UserDataArr } from '@/types/type';
+import type { UserDataArr, UserData } from '@/types/type';
 import { onMounted } from 'vue';
 
-defineProps<Props>();
+onMounted(() => {
+    $getFavoriteList();
+});
 
 type Props = {
     data?: UserDataArr;
 };
 
-onMounted(() => {
-    $getFavoriteList();
-});
+defineProps<Props>();
+
+const emit = defineEmits(['sendUseData']);
+
+function sendUserData(userData: UserData) {
+    emit('sendUseData', userData);
+}
 </script>
 
 <style scoped lang="scss">

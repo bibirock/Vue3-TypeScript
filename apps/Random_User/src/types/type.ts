@@ -55,19 +55,21 @@ export interface UserData {
     };
     nat: string;
 }
+export interface SettingData {
+    userCount: number;
+    dispalyMode: boolean;
+}
+
+export interface DisplayMode {
+    name: string;
+    component: ReturnType<typeof defineComponent>;
+}
 
 export type RequireUserDataParams = {
     page: number;
     results: number;
 };
 
-export interface SettingData {
-    userCount: number;
-    dispalyMode: boolean;
-}
-
 export type UserDataArr = Array<UserData>;
-export interface DisplayMode {
-    name: string;
-    component: ReturnType<typeof defineComponent>;
-}
+
+export type UserId = UserData['login']['uuid'];
