@@ -6,8 +6,8 @@ div.card-list(:class="'p-11 mx-auto'")
                 img(:src="user?.picture.large" referrerPolicy="no-referrer")
                 .user-card-info(:class="'set-item-center absolute bottom-0 w-full h-7 pb-1 backdrop-blur-sm'")
                     span.user-name(:class="'text-center text-white mr-4'") {{ user.name.first }}
-                    Icon.favorite-icon(v-if="$checkFavoriteUser(user.login.uuid)" @click="$removeFavorite(user.login.uuid)" icon="mdi:heart" color="red" width="25" height="25")
-                    Icon.favorite-icon(v-else @click="$addFavorite(user)" icon="mdi:cards-heart-outline" color="white" width="25" height="25")
+                    Icon.favorite-icon(v-if="$checkFavoriteUser(user.login.uuid)" @click.stop="$removeFavorite(user.login.uuid)" icon="mdi:heart" color="red" width="25" height="25")
+                    Icon.favorite-icon(v-else @click.stop="$addFavorite(user)" icon="mdi:cards-heart-outline" color="white" width="25" height="25")
 </template>
 
 <script setup lang="ts">

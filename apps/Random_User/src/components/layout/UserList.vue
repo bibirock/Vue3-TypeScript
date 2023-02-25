@@ -8,8 +8,8 @@ div.card-list(:class="'p-2 lg:p-11'")
                     span {{ "Name : " + user.name.first }}
                     span {{ "Country : " + user.location.country }}
                     span {{ "Gender : " + user.gender }}
-                Icon.favorite-icon(v-if="$checkFavoriteUser(user.login.uuid)" @click="$removeFavorite(user.login.uuid)" icon="mdi:heart" color="red" width="50" height="50")
-                Icon.favorite-icon(v-else @click="$addFavorite(user)" icon="mdi:cards-heart-outline" width="50" height="50")
+                Icon.favorite-icon(v-if="$checkFavoriteUser(user.login.uuid)" @click.stop="$removeFavorite(user.login.uuid)" icon="mdi:heart" color="red" width="50" height="50")
+                Icon.favorite-icon(v-else @click.stop="$addFavorite(user)" icon="mdi:cards-heart-outline" width="50" height="50")
 </template>
 
 <script setup lang="ts">
