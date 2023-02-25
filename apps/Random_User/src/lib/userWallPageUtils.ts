@@ -24,12 +24,14 @@ export const $storePageMode = computed({
 type UserId = UserData['login']['uuid'];
 
 const favorite = ref<Array<UserData>>();
-export function $getFavoriteList() {
+export function $getFavoriteList(): [] {
     const localFavorite = JSON.parse(window.sessionStorage.getItem('favorite') || 'null');
     if (localFavorite !== null) {
         favorite.value = localFavorite;
+        return localFavorite;
     } else {
         favorite.value = [];
+        return [];
     }
 }
 

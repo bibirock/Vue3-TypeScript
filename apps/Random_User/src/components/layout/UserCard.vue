@@ -11,13 +11,8 @@ div.card-list(:class="'p-11 mx-auto'")
 </template>
 
 <script setup lang="ts">
-import { $addFavorite, $checkFavoriteUser, $removeFavorite, $getFavoriteList } from '@/lib/userWallPageUtils';
+import { $addFavorite, $checkFavoriteUser, $removeFavorite } from '@/lib/userWallPageUtils';
 import type { UserDataArr, UserData } from '@/types/type';
-import { onMounted } from 'vue';
-
-onMounted(() => {
-    $getFavoriteList();
-});
 
 type Props = {
     data?: UserDataArr;
