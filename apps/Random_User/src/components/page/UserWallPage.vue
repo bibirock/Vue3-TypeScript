@@ -13,7 +13,7 @@ div(:class="'relative'")
 <script setup lang="ts">
 import type { RequireUserDataParams, UserDataArr, DisplayMode, UserData } from '@/types/type';
 import { $storeSelectedCount, $storePageMode } from '@/lib/userWallPageUtils';
-import { ref, computed, reactive, markRaw, watch, onMounted, nextTick } from 'vue';
+import { ref, computed, reactive, markRaw, watch, onMounted } from 'vue';
 import UserCard from '@/components/layout/UserCard.vue';
 import UserList from '@/components/layout/UserList.vue';
 import NavBar from '@/components/layout/NavBar.vue';
@@ -32,19 +32,27 @@ function getSelectUserAndOpenModal(userData: UserData) {
 }
 
 onMounted(() => {
-    getCurrentPage();
-    getUserData($storeSelectedCount.value, currentPage.value);
+    getCurrentPageNumber();
+    getCurrentRoute();
 });
 
+const userData = ref<UserDataArr>();
 const currentPage = ref(1);
-function getCurrentPage() {
+function getCurrentPageNumber() {
     if (route.query.q !== undefined) {
         const query = route.query.q;
         currentPage.value = parseInt(query as string);
     }
 }
 
-const userData = ref<UserDataArr>();
+function getCurrentRoute() {
+    if (route.name === 'favorite-page') {
+        userData.value = $getFavoriteList();
+    } else {
+        getUserData($storeSelectedCount.value, currentPage.value);
+    }
+}
+
 async function getUserData(userCount: number, pages: number) {
     const require: RequireUserDataParams = {
         results: userCount,
