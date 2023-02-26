@@ -1,12 +1,13 @@
 <template lang="pug">
-div(:class="'relative'")
+div(:class="'relative select-none'")
     div(:class="'sticky top-0 bg-white z-10'")
         nav-bar
     div(:class="'h-[600px] overflow-y-auto'")
-        keep-alive
+        NoDatas(v-if="userData?.length === 0")
+        keep-alive(v-else)
             component(:is="current.views" :key="current.views" :data="userData" @sendUseData="getSelectUserAndOpenModal")
     div(:class="'set-item-center mt-5 pb-5'")
-        a-pagination(v-model:current="currentPage" v-model:pageSize="$storeSelectedCount" :total="totalData" :showSizeChanger="false")
+        a-pagination(v-if="userData?.length !== 0" v-model:current="currentPage" v-model:pageSize="$storeSelectedCount" :total="totalData" :showSizeChanger="false")
     user-detail-modal(v-if="isShowModal" @closeModal="isShowModal = false" :user="selectUser")
 </template>
 
@@ -15,6 +16,7 @@ import type { RequireUserDataParams, UserDataArr, DisplayMode, UserData } from '
 import { $storeSelectedCount, $storePageMode, $getFavoriteList } from '@/lib/userWallPageUtils';
 import { ref, computed, reactive, markRaw, watch, onMounted } from 'vue';
 import UserDetailModal from '@/components/modal/UserDetailModal.vue';
+import NoDatas from '@/components/layout/NoDatas.vue';
 import UserCard from '@/components/layout/UserCard.vue';
 import UserList from '@/components/layout/UserList.vue';
 import NavBar from '@/components/layout/NavBar.vue';
@@ -52,7 +54,7 @@ function resetCurrentPage() {
 
 async function setPageData() {
     if (route.name === 'favorite-page') {
-        userData.value = favoriteCurrentPageData.value;
+        userData.value = favoriteCurrentPageData();
         if (userData.value.length === 0) resetCurrentPage();
         return;
     } else {
@@ -96,11 +98,11 @@ const totalData = computed(() => {
     }
 });
 
-const favoriteCurrentPageData = computed(() => {
+function favoriteCurrentPageData() {
     let startIndex = (currentPage.value - 1) * $storeSelectedCount.value;
     let endIndex = Math.min(startIndex + $storeSelectedCount.value, $getFavoriteList().length);
     return $getFavoriteList().slice(startIndex, endIndex);
-});
+}
 
 watch(
     () => [$storeSelectedCount.value, currentPage.value],
