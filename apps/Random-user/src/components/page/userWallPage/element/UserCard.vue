@@ -3,7 +3,7 @@ div.card-list(:class="'p-11 mx-auto'")
     .user-area(:class="'mx-auto w-11/12 set-item-start flex-wrap flex-row'")
         .user-card(v-for='(user,i) in data' @click="sendUserData(user)" :class="'m-2 rounded-lg w-fit max-w-[136px] overflow-hidden cursor-pointer bg-white hover:drop-shadow-md  hover:scale-105'")
             .user-card-items(:class="'mx-auto w-full block relative'")
-                img(:src="user?.picture.large" referrerPolicy="no-referrer")
+                img(:src="user?.picture.large" referrerPolicy="no-referrer" :class="'w-32 h-32'" loading='lazy')
                 .user-card-info(:class="'set-item-center absolute bottom-0 w-full h-7 pb-1 backdrop-blur-sm'")
                     span.user-name(:class="'text-center text-white mr-4'") {{ user.name.first }}
                     Icon.favorite-icon(v-if="$checkFavoriteUser(user.login.uuid)" @click.stop="$removeFavorite(user.login.uuid)" icon="mdi:heart" color="red" width="25" height="25")

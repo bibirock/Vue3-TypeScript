@@ -4,22 +4,22 @@ const routes: RouteRecordRaw[] = [
     {
         path: '/',
         name: 'all-user-page',
-        component: () => import('@/components/page/UserWallPage.vue'),
+        component: () => import('@/components/page/userWallPage/UserWallPage.vue')
     },
     {
         path: '/favorite/',
         name: 'favorite-page',
-        component: () => import('@/components/page/UserWallPage.vue'),
+        component: () => import('@/components/page/userWallPage/UserWallPage.vue')
     },
     {
         path: '/:catchAll(.*)',
-        redirect: '/',
-    },
+        redirect: '/'
+    }
 ];
 
 const option: RouterOptions = {
     history: createWebHashHistory(),
-    routes,
+    routes
 };
 
 const router: Router = createRouter(option);
