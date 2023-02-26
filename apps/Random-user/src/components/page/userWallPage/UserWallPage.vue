@@ -60,6 +60,15 @@ function setLoadState(isShow: boolean) {
     isLoading.value = isShow;
 }
 
+function getCurrentPageUserCount() {
+    const totalResults = 3010;
+    const resultsPerPage = $storeSelectedCount.value;
+    const totalPages = Math.ceil(totalResults / resultsPerPage);
+    const lastPageResults = totalResults - (totalPages - 1) * resultsPerPage;
+    const lastPage = currentPage.value === totalPages ? lastPageResults : resultsPerPage;
+    return lastPage;
+}
+
 async function setPageData() {
     if (route.name === 'favorite-page') {
         userData.value = favoriteCurrentPageData();
@@ -67,7 +76,7 @@ async function setPageData() {
         setLoadState(false);
         return;
     } else {
-        userData.value = await getUserData($storeSelectedCount.value, currentPage.value);
+        userData.value = await getUserData(getCurrentPageUserCount(), currentPage.value);
         setLoadState(false);
     }
 }
