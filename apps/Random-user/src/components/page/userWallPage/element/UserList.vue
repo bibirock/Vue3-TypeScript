@@ -1,10 +1,10 @@
 <template lang="pug">
-div.card-list(:class="'p-2 lg:p-11'")
+div.card-list(:class="'p-2 sm:p-11'")
     .user-area(:class="'mx-auto w-11/12 set-item-center flex-col'")
         .user-list.cursor-pointer(v-for='(user,i) in data' @click="sendUserData(user)" :class="'m-2 w-full rounded-lg border overflow-hidden md:w-[60%] lg:w-[50%] hover:drop-shadow-md hover:scale-105 bg-white'")
             .info-area(:class="'mx-auto flex'")
                 img(:src="user?.picture.large" referrerPolicy="no-referrer")
-                .user-info(:class="'basis-1/2 p-5 flex flex-col justify-between'")
+                .user-info(:class="'basis-1/2 px-2 py-5 sm:p12 flex flex-col justify-between'")
                     span {{ "Name : " + user.name.first }}
                     span {{ "Country : " + user.location.country }}
                     span {{ "Gender : " + user.gender }}

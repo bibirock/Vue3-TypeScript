@@ -2,7 +2,7 @@
 div(:class="'relative select-none'")
     div(:class="'sticky top-0 bg-white z-10'")
         nav-bar
-    div(:class="'h-[600px] overflow-y-auto'")
+    div(:class="'h-[80vh] overflow-y-auto'")
         loading-view(v-if="isLoading")
         no-datas(v-else-if="userData?.length === 0")
         keep-alive(v-else)
