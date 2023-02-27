@@ -4,7 +4,7 @@ div(:class="'relative select-none'")
         nav-bar
     div(:class="'h-[80vh] overflow-y-auto'")
         loading-view(v-if="isLoading")
-        no-datas(v-else-if="userData?.length === 0")
+        on-error(v-else-if="userData?.length === 0 || $netWorkError" :error='$errorStatus')
         keep-alive(v-else)
             component(:is="current.views" :key="current.views" :data="userData" @sendUseData="getSelectUserAndOpenModal")
     div(:class="'set-item-center mt-5 pb-5'")
@@ -15,16 +15,17 @@ div(:class="'relative select-none'")
 <script setup lang="ts">
 import type { RequireUserDataParams, UserDataArr, DisplayMode, UserData, SettingData } from '@/types/type';
 import { $storeSelectedCount, $storePageMode, $getFavoriteList } from '@/lib/userWallPageUtils';
-import { ref, computed, reactive, markRaw, watch, onMounted, nextTick } from 'vue';
-import UserDetailModal from '@/components/modal/UserDetailModal.vue';
-import UserCard from '@/components/page/userWallPage/element/UserCard.vue';
-import UserList from '@/components/page/userWallPage/element/UserList.vue';
-import LoadingView from '@/components/layout/LoadingView.vue';
-import NoDatas from '@/components/layout/NoDatas.vue';
-import NavBar from '@/components/layout/NavBar.vue';
+import { $netWorkError, $errorStatus, $resetErrorState, $onNetworkError } from '@/lib/errorHandlerUtlis';
+import { ref, computed, reactive, markRaw, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { $fecthUserData } from '@/apis/userAPI';
 import { userWallSetting } from '@/store';
+import UserCard from '@/components/page/userWallPage/element/UserCard.vue';
+import UserList from '@/components/page/userWallPage/element/UserList.vue';
+import UserDetailModal from '@/components/modal/UserDetailModal.vue';
+import LoadingView from '@/components/layout/LoadingView.vue';
+import onError from '@/components/layout/onError.vue';
+import NavBar from '@/components/layout/NavBar.vue';
 const $store = userWallSetting();
 
 const route = useRoute();
@@ -109,8 +110,15 @@ async function getUserData(userCount: number, pages: number) {
         results: userCount,
         page: pages
     };
-    const res = await $fecthUserData(require);
-    return res.results;
+
+    let res;
+    try {
+        res = await $fecthUserData(require);
+        $resetErrorState();
+    } catch {
+        $onNetworkError();
+    }
+    return res?.results;
 }
 
 const dispalyMode: Array<DisplayMode> = reactive([
@@ -164,7 +172,6 @@ watch(
     }
 );
 
-// 因為需等待 DOM 更新後才能拿到新的值，因此需使用 nextTick()
 watch(
     () => [$storeSelectedCount, $storePageMode],
     (newValue) => {

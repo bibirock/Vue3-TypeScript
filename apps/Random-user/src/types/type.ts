@@ -65,6 +65,12 @@ export interface DisplayMode {
     component: ReturnType<typeof defineComponent>;
 }
 
+export interface ErrorType {
+    status: string;
+    title: string;
+    subTitle: string;
+}
+
 export type RequireUserDataParams = {
     page: number;
     results: number;
