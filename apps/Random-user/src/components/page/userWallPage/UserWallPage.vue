@@ -15,16 +15,16 @@ div(:class="'relative select-none'")
 <script setup lang="ts">
 import type { RequireUserDataParams, UserDataArr, DisplayMode, UserData, SettingData } from '@/types/type';
 import { $storeSelectedCount, $storePageMode, $getFavoriteList } from '@/lib/userWallPageUtils';
-import { $netWorkError, $errorStatus, $resetErrorState, $onNetworkError } from '@/lib/errorHandlerUtlis';
+import { $netWorkError, $errorStatus, $resetErrorState, $onNetworkError } from '@/lib/errorHandlerUtils';
 import { ref, computed, reactive, markRaw, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { $fecthUserData } from '@/apis/userAPI';
+import { $fetchUserData } from '@/apis/userAPI';
 import { userWallSetting } from '@/store';
 import UserCard from '@/components/page/userWallPage/element/UserCard.vue';
 import UserList from '@/components/page/userWallPage/element/UserList.vue';
 import UserDetailModal from '@/components/modal/UserDetailModal.vue';
 import LoadingView from '@/components/layout/LoadingView.vue';
-import onError from '@/components/layout/onError.vue';
+import OnError from '@/components/layout/OnError.vue';
 import NavBar from '@/components/layout/NavBar.vue';
 const $store = userWallSetting();
 
@@ -59,7 +59,7 @@ function initSetting() {
 function getPreviousSetting(previousSetting: string) {
     const setting = JSON.parse(previousSetting) as SettingData;
     $store.updateUserCount(setting.userCount);
-    $store.updateDisplayMode(setting.dispalyMode === 'Card' ? 'Card' : 'List');
+    $store.updateDisplayMode(setting.displayMode === 'Card' ? 'Card' : 'List');
 }
 
 function setDefaultSetting() {
@@ -121,7 +121,7 @@ async function getUserData(userCount: number, pages: number) {
     return res?.results;
 }
 
-const dispalyMode: Array<DisplayMode> = reactive([
+const displayMode: Array<DisplayMode> = reactive([
     {
         name: 'Card',
         component: markRaw(UserCard)
@@ -133,12 +133,12 @@ const dispalyMode: Array<DisplayMode> = reactive([
 ]);
 
 function switchView(mode: string) {
-    const i = dispalyMode.findIndex((e) => e.name === mode);
-    current.views = dispalyMode[i].component;
+    const i = displayMode.findIndex((e) => e.name === mode);
+    current.views = displayMode[i].component;
 }
 
 const current = reactive({
-    views: dispalyMode[0].component
+    views: displayMode[0].component
 });
 
 const totalData = computed(() => {
@@ -177,7 +177,7 @@ watch(
     (newValue) => {
         const pageSettingData = {
             userCount: newValue[0].value,
-            dispalyMode: newValue[1].value
+            displayMode: newValue[1].value
         };
         switchView(newValue[1].value as string);
         sessionStorage.setItem('pageSetting', JSON.stringify(pageSettingData));

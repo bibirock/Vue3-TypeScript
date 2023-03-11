@@ -57,7 +57,7 @@ export interface UserData {
 }
 export interface SettingData {
     userCount: number;
-    dispalyMode: string;
+    displayMode: string;
 }
 
 export interface DisplayMode {

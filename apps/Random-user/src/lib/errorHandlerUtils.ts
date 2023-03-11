@@ -3,8 +3,8 @@ import { ref, reactive } from 'vue';
 
 export const $netWorkError = ref(false);
 
-export const $errorStatus: ErrorType = reactive($getInitalErrorState());
-export function $getInitalErrorState() {
+export const $errorStatus: ErrorType = reactive($getInitialErrorState());
+export function $getInitialErrorState() {
     return {
         status: '404',
         title: 'No Data',
@@ -13,7 +13,7 @@ export function $getInitalErrorState() {
 }
 
 export function $resetErrorState() {
-    Object.assign($errorStatus, $getInitalErrorState());
+    Object.assign($errorStatus, $getInitialErrorState());
     $netWorkError.value = false;
 }
 
