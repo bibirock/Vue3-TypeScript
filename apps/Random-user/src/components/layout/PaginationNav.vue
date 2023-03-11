@@ -9,7 +9,7 @@ nav
                 Icon(v-show="!isShowRewind" icon="ion:ellipsis-horizontal" width="20" height="20" :class="'ml-1 text-gray-400 cursor-pointer'")
         ul(:class="'flex m-0'")
             li(v-for="number in totalPages")
-                a.list-item(@click="getSelectPageNumber(number)" :class="getPageItemClass(number)" href="#" v-show="shouldDisplay(number) ") {{ number }}
+                button.list-item(@click="getSelectPageNumber(number)" :class="getPageItemClass(number)" href="#" v-show="shouldDisplay(number) ") {{ number }}
         div(class="set-item-center")
             button(@click="toNextPage(jumpPageCount)" :class="'w-6 mx-auto'" v-show="totalPages - current > 3" @mouseover="isShowFastForward = true" @mouseleave="isShowFastForward = false")
                 Icon(:class="'mr-1 text-cyan-500'" v-show="isShowFastForward" icon="material-symbols:keyboard-double-arrow-right" width="20" height="20")
@@ -91,7 +91,7 @@ watch(
 </script>
 
 <style scoped lang="scss">
-a.list-item {
+button.list-item {
     @apply px-3 py-1 mx-1  bg-white border  hover:text-cyan-500 hover:border-cyan-500;
 }
 button.control-btn {
