@@ -14,7 +14,7 @@ div.h-16.flex.justify-between
 <script setup lang="ts">
 import DropdownMenu from './element/DropdownMenu.vue';
 import { $storeSelectedCount, $storePageMode } from '@/lib/userWallPageUtils';
-import { reactive, onMounted, nextTick, watchEffect, ref } from 'vue';
+import { reactive, watchEffect, ref } from 'vue';
 import { userWallSetting } from '@/store';
 const $store = userWallSetting();
 
@@ -23,26 +23,20 @@ interface Option {
     value: number;
 }
 
-onMounted(() => {
-    setDefaultSelected();
-});
-
 const options = reactive([
     { text: '10', value: 10 },
     { text: '30', value: 30 },
     { text: '50', value: 50 }
 ]);
 
-const defaultSelected = ref(options.find((e) => e.value === $store.userCount) as Option);
+const defaultSelected = ref<Option>(setSelected() as Option);
 
-watchEffect(async () => {
-    const selectedOption = await setDefaultSelected();
-    defaultSelected.value = selectedOption as Option;
+watchEffect(() => {
+    defaultSelected.value = setSelected() || options[1];
 });
 
-async function setDefaultSelected() {
-    await nextTick();
-    return options.find((e) => e.value == $storeSelectedCount.value);
+function setSelected() {
+    return options.find((e) => e.value === $storeSelectedCount.value);
 }
 
 function changeSelectCount(value: number) {
