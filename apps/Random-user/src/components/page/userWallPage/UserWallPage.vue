@@ -8,7 +8,7 @@ div(:class="'relative select-none'")
         keep-alive(v-else)
             component(:is="current.views" :key="current.views" :data="userData" @sendUseData="getSelectUserAndOpenModal")
     div(:class="'set-item-center mt-5 pb-5'")
-        a-pagination(v-if="userData?.length !== 0" v-model:current="currentPage" v-model:pageSize="$storeSelectedCount" :total="totalData" :showSizeChanger="false")
+        pagination-nav(v-if="userData?.length !== 0" :current="currentPage" :pageSize="$storeSelectedCount" :total="totalData" @pageChange="setCurrentPageNumber")
     user-detail-modal(v-if="isShowModal" @closeModal="isShowModal = false" :user="selectUser")
 </template>
 
@@ -20,6 +20,7 @@ import { ref, computed, reactive, markRaw, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { $fetchUserData } from '@/apis/userAPI';
 import { userWallSetting } from '@/store';
+import PaginationNav from '@/components/layout/PaginationNav.vue';
 import UserCard from '@/components/page/userWallPage/element/UserCard.vue';
 import UserList from '@/components/page/userWallPage/element/UserList.vue';
 import UserDetailModal from '@/components/modal/UserDetailModal.vue';
@@ -113,7 +114,7 @@ async function getUserData(userCount: number, pages: number) {
 
     let res;
     try {
-        res = await $fecthUserData(require);
+        res = await $fetchUserData(require);
         $resetErrorState();
     } catch {
         $onNetworkError();
@@ -155,13 +156,21 @@ function favoriteCurrentPageData() {
     return $getFavoriteList().slice(startIndex, endIndex);
 }
 
+function setCurrentPageNumber(page: number) {
+    currentPage.value = page;
+}
+
 watch(
     () => [$storeSelectedCount.value, currentPage.value],
-    async () => {
+    (newValue) => {
         setLoadState(true);
-        router.push({ name: route.name as string, query: { page: currentPage.value } });
+        router.push({
+            name: route.name as string,
+            query: { page: newValue[1] }
+        });
         setPageData();
-    }
+    },
+    { deep: true }
 );
 
 watch(
