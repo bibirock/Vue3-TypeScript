@@ -66,9 +66,14 @@ export interface DisplayMode {
 }
 
 export interface ErrorType {
-    status: string;
+    status: ErrorStatus;
     title: string;
     subTitle: string;
+}
+
+export enum ErrorStatus {
+    Nodata = 'NODATA',
+    NetworkError = 'NETWORKERROR'
 }
 
 export type RequireUserDataParams = {
