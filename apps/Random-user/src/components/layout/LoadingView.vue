@@ -1,6 +1,6 @@
 <template lang="pug">
 .text-center.bg-slate-100.rounded.h-full.set-item-center
-    Icon(icon="eos-icons:bubble-loading" width="50" height="50" class="text-cyan-500")
+    Icon(icon="line-md:loading-twotone-loop" width="50" height="50" class="text-hight-light")
 </template>
 <script setup></script>
 <style scoped></style>
