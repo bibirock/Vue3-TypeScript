@@ -25,11 +25,13 @@ const isShowFastForward = ref(false);
 const isShowRewind = ref(false);
 const jumpPageCount = ref(5);
 
-const props = defineProps({
-    total: { type: Number, default: 0 },
-    current: { type: Number, default: 1 },
-    pageSize: { type: Number, default: 30 }
-});
+interface Props {
+    total: number;
+    current: number;
+    pageSize: number;
+}
+
+const props = defineProps<Props>();
 
 const totalPages = computed(() => {
     return Math.ceil(props.total / props.pageSize);
