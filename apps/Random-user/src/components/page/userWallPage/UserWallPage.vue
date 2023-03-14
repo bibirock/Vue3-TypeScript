@@ -6,7 +6,7 @@ div(:class="'relative select-none'")
         loading-view(v-if="isLoading")
         on-error(v-else-if="userList.length === 0 || $netWorkError" :error='$errorStatus')
         keep-alive(v-else)
-            component(:is="current.views" :key="current.views" :data="userData" @sendUseData="getSelectUserAndOpenModal")
+            component(:is="current.views.component" :key="current.views.name" :userList="userList" @sendUseData="getSelectUserAndOpenModal")
     div(:class="'set-item-center mt-5 pb-5'")
         pagination-nav(v-if="userList.length !== 0" :current="currentPage" :pageSize="$storePageSize" :total="dataCount" @pageChange="setCurrentPageNumber")
     user-detail-modal(v-if="isShowModal" @closeModal="isShowModal = false" :userData="selectUser")
@@ -44,39 +44,43 @@ function getSelectUserAndOpenModal(userList: UserData) {
 onMounted(() => {
     setLoadState(true);
     initSetting();
-    getCurrentPageNumber();
     setPageData();
     $getFavoriteList();
 });
 
 function initSetting() {
-    const previousSetting = sessionStorage.getItem('pageSetting' || 'null');
-    if (previousSetting !== null) {
-        getPreviousSetting(previousSetting);
+    const querySetting = route.query as RouteQuery;
+    const sessionSetting = sessionStorage.getItem('pageSetting' || 'null');
+    if (JSON.stringify(querySetting) !== '{}') {
+        getPreviousSetting(querySetting);
+        return;
+    } else if (sessionSetting !== null) {
+        getPreviousSetting(JSON.parse(sessionSetting));
+        return;
     } else {
         setDefaultSetting();
     }
 }
 
-function getPreviousSetting(previousSetting: string) {
-    const setting = JSON.parse(previousSetting) as SettingData;
-    $store.updateUserCount(setting.userCount);
-    $store.updateDisplayMode(setting.displayMode === 'Card' ? 'Card' : 'List');
+interface RouteQuery extends LocationQuery {
+    pageSize: string;
+    displayMode: string;
+    page: string;
+}
+
+const currentPage = ref(1);
+function getPreviousSetting(previousSetting: RouteQuery | SettingData) {
+    currentPage.value = parseInt(previousSetting.page as string) || 1;
+    $store.updatePageSize(parseInt(previousSetting.pageSize as string));
+    $store.updateDisplayMode(previousSetting.displayMode === 'Card' ? 'Card' : 'List');
 }
 
 function setDefaultSetting() {
-    $store.updateUserCount(30);
+    $store.updatePageSize(30);
     $store.updateDisplayMode('Card');
 }
 
-const userData = ref<UserDataArr>();
-const currentPage = ref(1);
-function getCurrentPageNumber() {
-    if (route.query.page !== undefined) {
-        const query = route.query.page;
-        currentPage.value = parseInt(query as string);
-    }
-}
+const userList = ref<UserArray>([]);
 
 async function setPageData() {
     if (route.name === 'favorite-page') {
@@ -85,7 +89,7 @@ async function setPageData() {
         setLoadState(false);
         return;
     } else {
-        userData.value = await getUserData(getCurrentPageUserCount(), currentPage.value);
+        userList.value = await getUserData(getCurrentPageUserCount(), checkMaxPageCount(currentPage.value));
         setLoadState(false);
     }
 }
@@ -98,16 +102,27 @@ function setLoadState(isShow: boolean) {
     isLoading.value = isShow;
 }
 
+const maxPages = ref();
 function getCurrentPageUserCount() {
     const totalResults = 3010;
     const resultsPerPage = $storePageSize.value;
     const totalPages = Math.ceil(totalResults / resultsPerPage);
+    maxPages.value = totalPages;
     const lastPageResults = totalResults - (totalPages - 1) * resultsPerPage;
     const lastPage = currentPage.value === totalPages ? lastPageResults : resultsPerPage;
     return lastPage;
 }
 
-async function getUserData(userCount: number, pages: number) {
+function checkMaxPageCount(page: number) {
+    if (page > maxPages.value) {
+        resetCurrentPage();
+        return currentPage.value;
+    } else {
+        return page;
+    }
+}
+
+async function getUserData(pageSize: number, pages: number) {
     const require: RequireUserDataParams = {
         results: pageSize,
         page: pages
@@ -162,12 +177,12 @@ function setCurrentPageNumber(page: number) {
 }
 
 watch(
-    () => [$storeSelectedCount.value, currentPage.value],
+    () => [$storePageSize.value, currentPage.value, current.views.name],
     (newValue) => {
         setLoadState(true);
         router.push({
             name: route.name as string,
-            query: { page: newValue[1] }
+            query: { pageSize: newValue[0], page: newValue[1], displayMode: newValue[2] }
         });
         setPageData();
     },
@@ -183,13 +198,13 @@ watch(
 );
 
 watch(
-    () => [$storeSelectedCount, $storePageMode],
+    () => [$storePageSize.value, $storeDisplayMode.value],
     (newValue) => {
         const pageSettingData = {
-            userCount: newValue[0].value,
-            displayMode: newValue[1].value
+            pageSize: newValue[0],
+            displayMode: newValue[1]
         };
-        switchView(newValue[1].value as string);
+        switchView(newValue[1] as string);
         sessionStorage.setItem('pageSetting', JSON.stringify(pageSettingData));
     },
     { deep: true }

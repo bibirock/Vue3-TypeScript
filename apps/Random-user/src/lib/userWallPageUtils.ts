@@ -14,7 +14,7 @@ export const $storePageSize = computed({
 
 export const $storeDisplayMode = computed({
     get() {
-        return $store.getIsDisplayMode;
+        return $store.getDisplayMode;
     },
     set(newValue) {
         $store.updateDisplayMode(newValue ? 'Card' : 'List');

@@ -11,7 +11,7 @@ export const userWallSetting = defineStore('linStore', {
         pageSize: 30
     }),
     getters: {
-        getIsDisplayMode(state) {
+        getDisplayMode(state) {
             return state.displayMode;
         },
         getPageSize(state) {
