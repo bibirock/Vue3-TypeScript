@@ -24,6 +24,14 @@ $ npm run dev
 
 ---
 
+### 修復問題:
+
+-   移除了 ant-design-vue 套件，並保持引入時的樣式及功能。
+-   修正 optional chaining 和 optional property `?`問題。
+-   變數與函式重新命名。
+-   將所有呈現資料存於網址中，讓 url 分享出去時，看到的是一樣的內容。
+-   調整頁數重置機制。
+
 ### 遇到的問題 :
 
 #### 1. 需定義資料的初始值與在重新整理時能保留頁面狀態
@@ -34,27 +42,32 @@ $ npm run dev
 >
 > ```typeScript
 >    page: number // 當前所在的頁碼
->    userCount: number // 當前所選顯示用戶的筆數
+>    pageSize: number // 當前所選顯示用戶的筆數
 >    displayMode: string // 當前顯示模式
 >    favoriteUser: Array // 喜歡的用戶列表
 > ```
 >
-> -   定義完資料資料之後，將 page 使用`route.query.page`存於網址中，重新整理可以透過網址再次獲取當前頁數。
+> -   定義完資料資料之後，將 page 、pageSize 、displayMode 使用`route.query`存於網址中，重新整理可以透過網址再次獲取當前頁數。
 >     另外的資料因爲不需要長期保留，因此選用`sessionstorage`進行保留，在重新整理後進行資料的獲取即可維持頁面狀態。
 >
 > 2.定義資料流：
 >
-> -   當頁面掛載時先確認`sessionstorage`有沒有暫存資料，如沒有資料就給定預設值，並將資料打入 `Pinia` 全域的狀態管理，方便各個組件取用。
+> -   當頁面掛載時先確認`route.query`有沒有所需資料，有的話代表是分享的網址或是當前應該在的頁面，如果網址沒有`route.query`就檢查`sessionstorage`，確認是否因為路由切換而導致沒有`route.query`參數，如沒有資料就給定預設值，並將資料打入 `Pinia` 全域的狀態管理，方便各個組件取用。
 >
 > ```TypeScript
->    function initSetting() {
->        const previousSetting = sessionStorage.getItem('pageSetting' || 'null');
->        if (previousSetting !== null) {
->            getPreviousSetting(previousSetting); // 有資料就使用上一個設定
->        } else {
->            setDefaultSetting(); // 沒有資料就進行使用預設值
->        }
+> function initSetting() {
+>    const querySetting = route.query as RouteQuery;
+>    const sessionSetting = sessionStorage.getItem('pageSetting' || 'null');
+>    if (JSON.stringify(querySetting) !== '{}') {
+>        getPreviousSetting(querySetting);
+>        return;
+>    } else if (sessionSetting !== null) {
+>        getPreviousSetting(JSON.parse(sessionSetting));
+>        return;
+>    } else {
+>        setDefaultSetting();
 >    }
+> }
 > ```
 >
 > -   監聽頁面的設定有變動的話就再次存入`Pinia`，讓各個組件的組件的值能同步更新
