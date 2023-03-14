@@ -4,21 +4,22 @@ div(:class="'relative select-none'")
         nav-bar
     div(:class="'h-[80vh] overflow-y-auto'")
         loading-view(v-if="isLoading")
-        on-error(v-else-if="userData?.length === 0 || $netWorkError" :error='$errorStatus')
+        on-error(v-else-if="userList.length === 0 || $netWorkError" :error='$errorStatus')
         keep-alive(v-else)
             component(:is="current.views" :key="current.views" :data="userData" @sendUseData="getSelectUserAndOpenModal")
     div(:class="'set-item-center mt-5 pb-5'")
-        pagination-nav(v-if="userData?.length !== 0" :current="currentPage" :pageSize="$storeSelectedCount" :total="totalData" @pageChange="setCurrentPageNumber")
-    user-detail-modal(v-if="isShowModal" @closeModal="isShowModal = false" :user="selectUser")
+        pagination-nav(v-if="userList.length !== 0" :current="currentPage" :pageSize="$storePageSize" :total="dataCount" @pageChange="setCurrentPageNumber")
+    user-detail-modal(v-if="isShowModal" @closeModal="isShowModal = false" :userData="selectUser")
 </template>
 
 <script setup lang="ts">
-import type { RequireUserDataParams, UserDataArr, DisplayMode, UserData, SettingData } from '@/types/type';
-import { $storeSelectedCount, $storePageMode, $getFavoriteList } from '@/lib/userWallPageUtils';
+import type { RequireUserDataParams, UserArray, DisplayMode, UserData, SettingData } from '@/types/type';
+import { $storePageSize, $storeDisplayMode, $getFavoriteList } from '@/lib/userWallPageUtils';
 import { $netWorkError, $errorStatus, $resetErrorState, $onNetworkError } from '@/lib/errorHandlerUtils';
 import { ref, computed, reactive, markRaw, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { $fetchUserData } from '@/apis/userAPI';
+import type { LocationQuery } from 'vue-router';
+import { $fetchUserList } from '@/apis/userAPI';
 import { userWallSetting } from '@/store';
 import PaginationNav from '@/components/layout/PaginationNav.vue';
 import UserCard from '@/components/page/userWallPage/element/UserCard.vue';
@@ -33,10 +34,10 @@ const route = useRoute();
 const router = useRouter();
 const isLoading = ref(false);
 
-const selectUser = ref<UserData>();
+const selectUser = ref();
 const isShowModal = ref(false);
-function getSelectUserAndOpenModal(userData: UserData) {
-    selectUser.value = userData;
+function getSelectUserAndOpenModal(userList: UserData) {
+    selectUser.value = userList;
     isShowModal.value = true;
 }
 
@@ -79,8 +80,8 @@ function getCurrentPageNumber() {
 
 async function setPageData() {
     if (route.name === 'favorite-page') {
-        userData.value = favoriteCurrentPageData();
-        if (userData.value.length === 0) resetCurrentPage();
+        userList.value = favoriteCurrentPageData();
+        if (userList.value.length === 0) resetCurrentPage();
         setLoadState(false);
         return;
     } else {
@@ -99,7 +100,7 @@ function setLoadState(isShow: boolean) {
 
 function getCurrentPageUserCount() {
     const totalResults = 3010;
-    const resultsPerPage = $storeSelectedCount.value;
+    const resultsPerPage = $storePageSize.value;
     const totalPages = Math.ceil(totalResults / resultsPerPage);
     const lastPageResults = totalResults - (totalPages - 1) * resultsPerPage;
     const lastPage = currentPage.value === totalPages ? lastPageResults : resultsPerPage;
@@ -108,13 +109,13 @@ function getCurrentPageUserCount() {
 
 async function getUserData(userCount: number, pages: number) {
     const require: RequireUserDataParams = {
-        results: userCount,
+        results: pageSize,
         page: pages
     };
 
     let res;
     try {
-        res = await $fetchUserData(require);
+        res = await $fetchUserList(require);
         $resetErrorState();
     } catch {
         $onNetworkError();
@@ -122,7 +123,7 @@ async function getUserData(userCount: number, pages: number) {
     return res?.results;
 }
 
-const displayMode: Array<DisplayMode> = reactive([
+const displayOptions: Array<DisplayMode> = reactive([
     {
         name: 'Card',
         component: markRaw(UserCard)
@@ -134,15 +135,15 @@ const displayMode: Array<DisplayMode> = reactive([
 ]);
 
 function switchView(mode: string) {
-    const i = displayMode.findIndex((e) => e.name === mode);
-    current.views = displayMode[i].component;
+    const i = displayOptions.findIndex((e) => e.name === mode);
+    current.views = displayOptions[i];
 }
 
 const current = reactive({
-    views: displayMode[0].component
+    views: displayOptions[0]
 });
 
-const totalData = computed(() => {
+const dataCount = computed(() => {
     if (route.name === 'all-user-page') {
         return 3010;
     } else {
@@ -151,8 +152,8 @@ const totalData = computed(() => {
 });
 
 function favoriteCurrentPageData() {
-    let startIndex = (currentPage.value - 1) * $storeSelectedCount.value;
-    let endIndex = Math.min(startIndex + $storeSelectedCount.value, $getFavoriteList().length);
+    let startIndex = (currentPage.value - 1) * $storePageSize.value;
+    let endIndex = Math.min(startIndex + $storePageSize.value, $getFavoriteList().length);
     return $getFavoriteList().slice(startIndex, endIndex);
 }
 

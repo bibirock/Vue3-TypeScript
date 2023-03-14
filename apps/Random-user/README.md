@@ -68,7 +68,7 @@ $ npm run dev
 > ```TypeScript
 > function getCurrentPageUserCount() {
 >    const totalResults = 3010; //總筆數
->    const resultsPerPage = $storeSelectedCount.value; // 當前頁面一次顯示幾個User
+>    const resultsPerPage = $storePageSize.value; // 當前頁面一次顯示幾個User
 >    const totalPages = Math.ceil(totalResults / resultsPerPage); // 算出總頁數
 >    const lastPageResults = totalResults - (totalPages - 1) * resultsPerPage; // 算出最後一頁的筆數應該為幾個
 >    const lastPage = currentPage.value === totalPages ? lastPageResults : resultsPerPage; // 下一頁如果到底的話就使用剛剛得到得 lastPageResults

@@ -2,25 +2,25 @@ import { defineStore } from 'pinia';
 
 type StoreData = {
     displayMode: string;
-    userCount: number;
+    pageSize: number;
 };
 
 export const userWallSetting = defineStore('linStore', {
     state: (): StoreData => ({
         displayMode: 'Card',
-        userCount: 30
+        pageSize: 30
     }),
     getters: {
         getIsDisplayMode(state) {
             return state.displayMode;
         },
-        getUserCount(state) {
-            return state.userCount;
+        getPageSize(state) {
+            return state.pageSize;
         }
     },
     actions: {
-        updateUserCount(count: number) {
-            this.userCount = count;
+        updatePageSize(count: number) {
+            this.pageSize = count;
         },
 
         updateDisplayMode(mode: string) {

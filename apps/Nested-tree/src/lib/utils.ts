@@ -1,4 +1,4 @@
-import type { InputType, TreeArray } from '@/types/index.mjs';
+import type { InputList, TreeArray } from '@/types/index.js';
 
 /**
  * 根據輸入的資料來創建資料結構
@@ -12,9 +12,9 @@ import type { InputType, TreeArray } from '@/types/index.mjs';
         child?: [] | Array<TreeStructure>
  * }]
  */
-export function $createTreeStructure(objList: InputType): TreeArray {
+export function $createTreeStructure(inputList: InputList): TreeArray {
     const result: TreeArray = [];
-    objList.forEach((obj) => {
+    inputList.forEach((obj) => {
         const keys = obj.key.split('.');
         let currentObj = result;
         keys.forEach((key, index) => {

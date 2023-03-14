@@ -56,8 +56,9 @@ export interface UserData {
     nat: string;
 }
 export interface SettingData {
-    userCount: number;
+    pageSize: number;
     displayMode: string;
+    page: number;
 }
 
 export interface DisplayMode {
@@ -81,6 +82,6 @@ export type RequireUserDataParams = {
     results: number;
 };
 
-export type UserDataArr = Array<UserData>;
+export type UserArray = Array<UserData>;
 
 export type UserId = UserData['login']['uuid'];
