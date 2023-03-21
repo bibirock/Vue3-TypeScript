@@ -1,19 +1,19 @@
 <template lang="pug">
 nav
-    div(:class="'set-item-center'")
+    div(class="set-item-center")
         div(class="set-item-center")
             button.control-btn(href="#" @click="toPrevPage()" :class="{ 'cursor-not-allowed': current === 1 }")
                 Icon(icon="material-symbols:chevron-left" width="22" height="22")
-            button(@click="toPrevPage(jumpPageCount)" :class="'w-6 mx-auto'" v-show="current > 3" @mouseover="isShowRewind = true" @mouseleave="isShowRewind = false")
-                Icon(:class="'ml-1 text-hight-light'" v-show="isShowRewind" icon="material-symbols:keyboard-double-arrow-left" width="20" height="20")
+            button(@click="toPrevPage(jumpPageCount)" class="w-6 mx-auto" v-show="current > 3" @mouseover="isShowRewind = true" @mouseleave="isShowRewind = false")
+                Icon(class="ml-1 text-hight-light" v-show="isShowRewind" icon="material-symbols:keyboard-double-arrow-left" width="20" height="20")
                 Icon(v-show="!isShowRewind" icon="ion:ellipsis-horizontal" width="20" height="20" :class="'ml-1 text-gray-400 cursor-pointer'")
-        ul(:class="'flex m-0'")
+        ul(class="flex m-0")
             li(v-for="number in totalPages")
-                button.list-item(@click="getSelectPageNumber(number)" :class="getPageItemClass(number)" href="#" v-show="shouldDisplay(number) ") {{ number }}
+                button.list-item(@click="getSelectPageNumber(number)" :class="getPageItemClass(number)" v-show="shouldDisplay(number) ") {{ number }}
         div(class="set-item-center")
-            button(@click="toNextPage(jumpPageCount)" :class="'w-6 mx-auto'" v-show="totalPages - current > 3" @mouseover="isShowFastForward = true" @mouseleave="isShowFastForward = false")
-                Icon(:class="'mr-1 text-hight-light'" v-show="isShowFastForward" icon="material-symbols:keyboard-double-arrow-right" width="20" height="20")
-                Icon(icon="ion:ellipsis-horizontal" v-show="!isShowFastForward" width="20" height="20" :class="'mr-1 text-gray-400 cursor-pointer'")
+            button(@click="toNextPage(jumpPageCount)" class="w-6 mx-auto" v-show="totalPages - current > 3" @mouseover="isShowFastForward = true" @mouseleave="isShowFastForward = false")
+                Icon(class="mr-1 text-hight-light" v-show="isShowFastForward" icon="material-symbols:keyboard-double-arrow-right" width="20" height="20")
+                Icon(icon="ion:ellipsis-horizontal" v-show="!isShowFastForward" width="20" height="20" class="mr-1 text-gray-400 cursor-pointer")
             button.control-btn(href="#" @click="toNextPage()" :class="{ 'cursor-not-allowed': current === totalPages }")
                 Icon(icon="material-symbols:chevron-right" width="22" height="22")
 </template>

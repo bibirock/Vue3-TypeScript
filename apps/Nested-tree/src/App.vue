@@ -5,7 +5,5 @@ div#page-content
 </template>
 
 <script setup lang="ts">
-import NestedTreeDemoPage from './components/page/NestedTreeDemoPage.vue';
+import NestedTreeDemoPage from '@/components/page/NestedTreeDemoPage.vue';
 </script>
-
-<style scoped></style>

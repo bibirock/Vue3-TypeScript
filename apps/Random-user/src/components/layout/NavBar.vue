@@ -1,13 +1,13 @@
 <template lang="pug">
-div.h-16.flex.justify-between
-    div(:class="'flex basis-1/2'")
-        div(:class="'set-item-around w-1/4 ml-5 flex-shrink-0 min-w-[100px]'")
+div(class="h-16 flex justify-between")
+    div(class="flex basis-1/2")
+        div(class="set-item-around w-1/4 ml-5 flex-shrink-0 min-w-[100px]")
             router-link.text-black(:to="{ name: 'all-user-page' }" active-class="text-hight-light") {{ "ALL" }}
             router-link.text-black(:to="{ name: 'favorite-page' }" active-class="text-hight-light") {{ "Favorite" }}
-    div(:class="'set-item-end '")
-        div.set-item-center.mr-5
+    div(class="set-item-end")
+        div(class="set-item-center mr-5")
             dropdown-menu(:options="options" :defaultSelected="defaultSelected" @selected-change="changeSelectCount")
-            div(:class="'set-item-around w-20'")
+            div(class="set-item-around w-20")
                 Icon.inline-block.cursor-pointer(:class="{ 'text-hight-light': $storeDisplayMode === 'Card' }" @click="$store.updateDisplayMode('Card')" icon="material-symbols:grid-view-rounded" width="24" height="24" )
                 Icon.inline-block.cursor-pointer(:class="{ 'text-hight-light': $storeDisplayMode === 'List' }" @click="$store.updateDisplayMode('List')" icon="material-symbols:format-list-bulleted-sharp" width="24" height="24" )
 </template>
@@ -43,4 +43,3 @@ function changeSelectCount(value: number) {
     $storePageSize.value = value;
 }
 </script>
-<style scoped></style>

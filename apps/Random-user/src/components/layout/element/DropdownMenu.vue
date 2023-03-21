@@ -1,11 +1,11 @@
 <template lang="pug">
-div(:class="'relative'")
-    button(@click="isOpenMenuItem = true" @blur="isOpenMenuItem = false" :class="'border-gray-200 border py-1 text-center set-item-center'") 
-        span(:class="'pr-16 pl-2'") {{ selectedOption.text }}
-        Icon(:class="'pr-1 w-full'" icon="material-symbols:keyboard-arrow-down"  width="20" height="20") 
-    div(v-show="isOpenMenuItem" :class="'z-10 bg-white divide-y divide-gray-100 shadow w-[115px] absolute top-8'")
-        ul(:class="'py-2 text-sm text-gray-700 m-0 p-0'")
-            li(v-for="option in options" :class="'block px-4 py-2 hover:bg-gray-100 cursor-pointer'" @mousedown.prevent @click="getSelect(option.value)") {{ option.text }}
+div(class="relative")
+    button(@click="isOpenMenuItem = true" @blur="isOpenMenuItem = false" class="border-gray-200 border py-1 text-center set-item-center max-w-[115px]")
+        span(class="pr-16 pl-2") {{ selectedOption.text }}
+        Icon(class="pr-1 w-full'" icon="material-symbols:keyboard-arrow-down"  width="20" height="20") 
+    div(v-show="isOpenMenuItem" class="z-10 bg-white divide-y divide-gray-100 shadow w-[115px] absolute top-8")
+        ul(class="py-2 text-sm text-gray-700 m-0 p-0")
+            li(v-for="option in options" class="block px-4 py-2 hover:bg-gray-100 cursor-pointer" @mousedown.prevent @click="getSelect(option.value)") {{ option.text }}
 </template>
 <script setup lang="ts">
 import { ref, watch } from 'vue';
@@ -42,4 +42,3 @@ function getSelect(option: number) {
     isOpenMenuItem.value = false;
 }
 </script>
-<style scoped></style>

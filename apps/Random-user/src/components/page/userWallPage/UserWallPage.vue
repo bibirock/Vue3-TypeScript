@@ -1,30 +1,30 @@
 <template lang="pug">
-div(:class="'relative select-none'")
-    div(:class="'sticky top-0 bg-white z-10'")
+div(class="relative select-none")
+    div(class="sticky top-0 bg-white z-10")
         nav-bar
-    div(:class="'h-[80vh] overflow-y-auto'")
+    div(class="h-[80vh] overflow-y-auto")
         loading-view(v-if="isLoading")
         on-error(v-else-if="userList.length === 0 || $netWorkError" :error='$errorStatus')
         keep-alive(v-else)
             component(:is="current.views.component" :key="current.views.name" :userList="userList" @sendUseData="getSelectUserAndOpenModal")
-    div(:class="'set-item-center mt-5 pb-5'")
+    div(class="set-item-center mt-5 pb-5")
         pagination-nav(v-if="userList.length !== 0" :current="currentPage" :pageSize="$storePageSize" :total="dataCount" @pageChange="setCurrentPageNumber")
     user-detail-modal(v-if="isShowModal" @closeModal="isShowModal = false" :userData="selectUser")
 </template>
 
 <script setup lang="ts">
 import type { RequireUserDataParams, UserArray, DisplayMode, UserData, SettingData } from '@/types/type';
-import { $storePageSize, $storeDisplayMode, $getFavoriteList } from '@/lib/userWallPageUtils';
 import { $netWorkError, $errorStatus, $resetErrorState, $onNetworkError } from '@/lib/errorHandlerUtils';
+import { $storePageSize, $storeDisplayMode, $getFavoriteList } from '@/lib/userWallPageUtils';
 import { ref, computed, reactive, markRaw, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import type { LocationQuery } from 'vue-router';
 import { $fetchUserList } from '@/apis/userAPI';
 import { userWallSetting } from '@/store';
-import PaginationNav from '@/components/layout/PaginationNav.vue';
-import UserCard from '@/components/page/userWallPage/element/UserCard.vue';
 import UserList from '@/components/page/userWallPage/element/UserList.vue';
+import UserCard from '@/components/page/userWallPage/element/UserCard.vue';
 import UserDetailModal from '@/components/modal/UserDetailModal.vue';
+import PaginationNav from '@/components/layout/PaginationNav.vue';
 import LoadingView from '@/components/layout/LoadingView.vue';
 import OnError from '@/components/layout/OnError.vue';
 import NavBar from '@/components/layout/NavBar.vue';
@@ -210,4 +210,3 @@ watch(
     { deep: true }
 );
 </script>
-<style scoped></style>
